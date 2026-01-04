@@ -1,5 +1,5 @@
 # -- Cloud service being deployed on (example: `aws`, `azure`, `do`, `gcp`, `other`).
-cloud:
+cloud: "aws"
 
 # -- Notification email for notifications to be sent to from the PostHog stack
 notificationEmail:
@@ -14,7 +14,7 @@ image:
   # -- PostHog image SHA to use (example: `sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4`).
   sha:
   # -- PostHog image tag to use (example: `release-1.43.0`).
-  tag:
+  tag: "bb33433dcf184a487119f0880d52096e4ae678af"
   # -- PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead.
   default: ":latest"
   # -- PostHog image pull policy.
@@ -42,14 +42,26 @@ posthogSecretKey:
   existingSecretKey: posthog-secret
 
 # -- Environment variables to inject into every PostHog deployment.
-env: []
+env:
+  - name: CLICKHOUSE_MIGRATIONS_CLUSTER
+    value: "posthog"
+  - name: SKIP_ASYNC_MIGRATIONS_SETUP
+    value: "1"
+  - name: SKIP_ASYNC_MIGRATIONS
+    value: "1"
+  - name: RUN_ASYNC_MIGRATIONS
+    value: "0"
+  - name: CLICKHOUSE_REPLICATION
+    value: "false"
+  - name: POSTHOG_SKIP_MIGRATION_CHECKS
+    value: "1"
 # env:
 #   - name: FOO
 #     value: bar
 
 migrate:
   # -- Whether to install the PostHog migrate job or not.
-  enabled: true
+  enabled: false
 
 events:
   # -- Whether to install the PostHog events stack or not.
@@ -248,9 +260,18 @@ web:
     capture: false
 
   # -- Node labels for web stack deployment.
-  nodeSelector: {}
+  nodeSelector:
+    if-posthog-pod: "true"
   # -- Toleration labels for web stack deployment.
-  tolerations: []
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"  
   # -- Affinity settings for web stack deployment.
   affinity: {}
   # :TODO:
@@ -270,19 +291,19 @@ web:
 
   readinessProbe:
     # -- The readiness probe failure threshold
-    failureThreshold: 3
+    failureThreshold: 30
     # -- The readiness probe initial delay seconds
     initialDelaySeconds: 0
     # -- The readiness probe period seconds
-    periodSeconds: 30
+    periodSeconds: 10
     # -- The readiness probe success threshold
-    successThreshold: 1
+    successThreshold: 30
     # -- The readiness probe timeout seconds
-    timeoutSeconds: 5
+    timeoutSeconds: 30
 
   startupProbe:
     # -- The startup probe failure threshold
-    failureThreshold: 6
+    failureThreshold: 60
     # -- The startup probe initial delay seconds
     initialDelaySeconds: 0
     # -- The startup probe period seconds
@@ -290,8 +311,11 @@ web:
     # -- The startup probe success threshold
     successThreshold: 1
     # -- The startup probe timeout seconds
-    timeoutSeconds: 5
-
+    timeoutSeconds: 30
+  extraInitContainers:
+    - name: skip-async-migrations
+      image: busybox
+      command: ['sh', '-c', 'echo "Skipping async migrations"']
   # -- Container security context for web stack deployment.
   securityContext:
     enabled: false
@@ -330,15 +354,38 @@ worker:
     maxUnavailable: 25%
 
   # -- Additional env variables to inject into the worker stack deployment.
-  env: []
-
+  env:
+    - name: SKIP_ASYNC_MIGRATIONS_SETUP
+      value: "1"
+    - name: SKIP_ASYNC_MIGRATIONS
+      value: "1"
+  # Override the command to bypass the hardcoded script
+  command:
+    - /bin/bash
+    - -c
+    - |
+      export SKIP_ASYNC_MIGRATIONS_SETUP=1
+      export SKIP_ASYNC_MIGRATIONS=1
+      export RUN_ASYNC_MIGRATIONS=0
+      source ./bin/celery-queues.env
+      ./bin/docker-worker-beat &
+      celery -A posthog worker -Ofair -n node@%h --without-mingle --without-heartbeat
   # -- Resource limits for the worker stack deployment.
   resources: {}
 
   # -- Node labels for the worker stack deployment.
-  nodeSelector: {}
+  nodeSelector:
+    if-posthog-pod: "true"
   # -- Toleration labels for the worker stack deployment.
-  tolerations: []
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"    
   # -- Affinity settings for the worker stack deployment.
   affinity: {}
 
@@ -355,8 +402,9 @@ plugins:
   # jobs. To scale these components separately, instead use the individual
   # component deployments, pluginsIngestion, pluginsAsync, pluginsJobs, and
   # pluginsScheduler.
-  enabled: true
-
+  enabled: false
+  image:
+    tag: "release-1.60.0"
   # -- Count of plugin-server pods to run. This setting is ignored if `plugins.hpa.enabled` is set to `true`.
   replicacount: 1
 
@@ -387,9 +435,18 @@ plugins:
   resources: {}
 
   # -- Node labels for the plugin-server stack deployment.
-  nodeSelector: {}
+  nodeSelector:
+    if-posthog-pod: "true"
   # -- Toleration labels for the plugin-server stack deployment.
-  tolerations: []
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"    
   # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
 
@@ -414,15 +471,15 @@ plugins:
 
   readinessProbe:
     # -- The readiness probe failure threshold
-    failureThreshold: 3
+    failureThreshold: 30
     # -- The readiness probe initial delay seconds
     initialDelaySeconds: 50
     # -- The readiness probe period seconds
     periodSeconds: 30
     # -- The readiness probe success threshold
-    successThreshold: 1
+    successThreshold: 30
     # -- The readiness probe timeout seconds
-    timeoutSeconds: 5
+    timeoutSeconds: 30
 
   # -- Sentry endpoint to send errors to. Falls back to global sentryDSN
   sentryDSN:
@@ -463,9 +520,18 @@ pluginsAsync:
   resources: {}
 
   # -- Node labels for the plugin-server stack deployment.
-  nodeSelector: {}
+  nodeSelector:
+    if-posthog-pod: "true"
   # -- Toleration labels for the plugin-server stack deployment.
-  tolerations: []
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"   
   # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
 
@@ -552,9 +618,18 @@ pluginsIngestion:
   resources: {}
 
   # -- Node labels for the plugin-server stack deployment.
-  nodeSelector: {}
+  nodeSelector:
+    if-posthog-pod: "true"
   # -- Toleration labels for the plugin-server stack deployment.
-  tolerations: []
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"     
   # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
 
@@ -644,9 +719,19 @@ pluginsAnalyticsIngestion:
   resources: {}
 
   # -- Node labels for the plugin-server stack deployment.
-  nodeSelector: {}
   # -- Toleration labels for the plugin-server stack deployment.
-  tolerations: []
+  nodeSelector:
+    if-posthog-pod: "true"
+  # -- Toleration labels for the plugin-server stack deployment.
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"    
   # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
 
@@ -770,9 +855,18 @@ recordingsIngestion:
   resources: {}
 
   # -- Node labels for the plugin-server stack deployment.
-  nodeSelector: {}
+  nodeSelector:
+    if-posthog-pod: "true"
   # -- Toleration labels for the plugin-server stack deployment.
-  tolerations: []
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"  
   # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
 
@@ -828,7 +922,7 @@ recordingsBlobIngestion:
         volumeClaimTemplate:
           spec:
             accessModes: ["ReadWriteOnce"]
-            storageClassName: "gp3"
+            storageClassName: "gp2"
             resources:
               requests:
                 storage: 50Gi
@@ -887,9 +981,18 @@ recordingsBlobIngestion:
   resources: {}
 
   # -- Node labels for the plugin-server stack deployment.
-  nodeSelector: {}
+  nodeSelector:
+    if-posthog-pod: "true"
   # -- Toleration labels for the plugin-server stack deployment.
-  tolerations: []
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"  
   # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
 
@@ -963,9 +1066,18 @@ pluginsExports:
   resources: {}
 
   # -- Node labels for the plugin-server stack deployment.
-  nodeSelector: {}
+  nodeSelector:
+    if-posthog-pod: "true"
   # -- Toleration labels for the plugin-server stack deployment.
-  tolerations: []
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"  
   # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
 
@@ -1038,9 +1150,18 @@ pluginsJobs:
   resources: {}
 
   # -- Node labels for the plugin-server stack deployment.
-  nodeSelector: {}
+  nodeSelector:
+    if-posthog-pod: "true"
   # -- Toleration labels for the plugin-server stack deployment.
-  tolerations: []
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"  
   # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
 
@@ -1113,9 +1234,18 @@ pluginsScheduler:
   resources: {}
 
   # -- Node labels for the plugin-server stack deployment.
-  nodeSelector: {}
+  nodeSelector:
+    if-posthog-pod: "true"
   # -- Toleration labels for the plugin-server stack deployment.
-  tolerations: []
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
   # -- Affinity settings for the plugin-server stack deployment.
   affinity: {}
 
@@ -1199,9 +1329,18 @@ temporalPyWorker:
   resources: {}
 
   # -- Node labels for the worker stack deployment.
-  nodeSelector: {}
-  # -- Toleration labels for the worker stack deployment.
-  tolerations: []
+  nodeSelector:
+    if-posthog-pod: "true"
+  # -- Toleration labels for the plugin-server stack deployment.
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
   # -- Affinity settings for the worker stack deployment.
   affinity: {}
 
@@ -1337,14 +1476,14 @@ ingress:
   # -- Ingress handler type. Defaults to `nginx` if nginx is enabled and to `clb` on gcp.
   type:
   # -- URL to address your PostHog installation. You will need to set up DNS after installation
-  hostname:
+  hostname: "posthog.drivex.in"
   gcp:
     # -- Specifies the name of the global IP address resource to be associated with the google clb
     ip_name: "posthog"
     # -- If true, will force a https redirect when accessed over http
     forceHttps: true
     # -- Specifies the name of the tls secret to be used by the ingress. If not specified a managed certificate will be generated.
-    secretName: ""
+    secretName: "posthog-prod-tls"
   # -- Whether to enable letsencrypt. Defaults to true if hostname is defined and nginx and cert-manager are enabled otherwise false.
   letsencrypt:
   nginx:
@@ -1353,7 +1492,10 @@ ingress:
     # -- Whether to redirect to TLS with nginx ingress.
     redirectToTLS: true
   # -- Extra annotations
-  annotations: {}
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    # Add any other annotations your setup needs  
   # -- TLS secret to be used by the ingress.
   secretName:
 
@@ -1427,6 +1569,10 @@ postgresql:
   enabled: true
   # -- Name override for PostgreSQL app.
   nameOverride: posthog-postgresql
+  image:
+    repository: bitnamilegacy/postgresql
+    tag: "17.3.0-debian-12-r1"
+    pullPolicy: IfNotPresent  
   # -- PostgreSQL database name.
   postgresqlDatabase: posthog
   # -- PostgreSQL database password.
@@ -1436,6 +1582,7 @@ postgresql:
     enabled: true
     # -- PVC Storage Request for PostgreSQL volume.
     size: 10Gi
+    storageClass: "gp2"
 
 externalPostgresql:
   # -- External PostgreSQL service host.
@@ -1519,10 +1666,18 @@ _pgbouncer: &_pgbouncer
   resources: {}
 
   # -- Node labels for the pgbouncer stack deployment.
-  nodeSelector: {}
-
-  # -- Toleration labels for the pgbouncer stack deployment.
-  tolerations: []
+  nodeSelector:
+    if-posthog-pod: "true"
+  # -- Toleration labels for the plugin-server stack deployment.
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"  
 
   # -- Affinity settings for the pgbouncer stack deployment.
   affinity: {}
@@ -1560,9 +1715,9 @@ _pgbouncer: &_pgbouncer
     timeoutSeconds: 2
 
   image:
-    repository: bitnami/pgbouncer
-    tag: 1.18.0
-    pullPolicy: IfNotPresent
+    repository: bitnamilegacy/pgbouncer
+    tag: "1.23.0-debian-12-r0"
+    pullPolicy: IfNotPresent   
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
     ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
@@ -1602,7 +1757,10 @@ pgbouncerRead:
 redis:
   # -- Whether to deploy a Redis server to satisfy the applications requirements. To use an external redis instance set this to `false` and configure the `externalRedis` parameters.
   enabled: true
-
+  image:
+    repository: bitnamilegacy/valkey
+    tag: "8.0.2-debian-12-r2"
+    pullPolicy: IfNotPresent      
   nameOverride: "posthog-redis"
 
   fullnameOverride: ""
@@ -1637,6 +1795,7 @@ redis:
 
       # -- Persistent Volume size.
       size: 5Gi
+      storageClass: "gp2"
     # -- Array with additional command line flags for Redis master.
     extraFlags:
       ## The maxmemory configuration directive is used in order to configure Redis to use a specified
@@ -1648,7 +1807,18 @@ redis:
       ## allkeys-lru: evict keys by trying to remove the less recently used (LRU) keys first, in order
       ## to make space for the new data added
       - "--maxmemory-policy allkeys-lru"
-
+  nodeSelector:
+    if-posthog-pod: "true"
+  # -- Toleration labels for web stack deployment.
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"  
 externalRedis:
   # -- External Redis host to use.
   host: ""
@@ -1676,7 +1846,10 @@ externalSessionRecordingRedis: {}
 kafka:
   # -- Whether to deploy Kafka as part of this release. To use an external Kafka instance set this to `false` and configure the `externalKafka` values.
   enabled: true
-
+  image:
+    repository: bitnamilegacy/kafka
+    tag: "3.6"
+    pullPolicy: IfNotPresent    
   nameOverride: posthog-kafka
 
   fullnameOverride: ""
@@ -1691,11 +1864,23 @@ kafka:
   numPartitions: 1
 
   persistence:
+    storageClass: "gp2"
     # - Enable data persistence using PVC.
     enabled: true
     # -- PVC Storage Request for Kafka data volume.
     size: 20Gi
-
+  nodeSelector:
+    if-posthog-pod: "true"
+  # -- Toleration labels for web stack deployment.
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"  
   zookeeper:
     # -- Switch to enable or disable the ZooKeeper helm chart. !!! Please DO NOT override this (this chart installs Zookeeper separately) !!!
     enabled: false
@@ -1728,7 +1913,7 @@ externalTemporal:
   # - External Temporal scheduler's port
   port: 7233
   # - Namespace to register into
-  namespace: ""
+  namespace: "posthog"
 
 ###
 ###
@@ -1738,9 +1923,11 @@ externalTemporal:
 zookeeper:
   # -- Whether to deploy Zookeeper as part of this release.
   enabled: true
-
+  image:
+    repository: bitnamilegacy/zookeeper
+    tag: "3.9.3-debian-12-r1"
+    pullPolicy: IfNotPresent      
   nameOverride: posthog-zookeeper
-
   # -- Number of ZooKeeper nodes
   replicaCount: 1
 
@@ -1764,6 +1951,10 @@ zookeeper:
     # prometheus.io/scrape: "true"
     # prometheus.io/path: /metrics
     # prometheus.io/port: "9141"
+  persistence:
+    enabled: true
+    storageClass: "gp2"
+    size: 8Gi    
 
 ###
 ###
@@ -1774,7 +1965,7 @@ clickhouse:
   # -- Whether to install clickhouse. If false, `clickhouse.host` must be set
   enabled: true
   # -- Which namespace to install clickhouse and the `clickhouse-operator` to (defaults to namespace chart is installed to)
-  namespace:
+  namespace: "posthog"
   # -- Clickhouse cluster
   cluster: posthog
   # -- Clickhouse database
@@ -1785,7 +1976,7 @@ clickhouse:
   password: a1f31e03-c88e-4ca6-a2df-ad49183d15d9
   # -- Clickhouse existing secret name that needs to be in the namespace where
   # posthog is deployed into. Will not use the above password value if set
-  existingSecret: ""
+  existingSecret: "" 
   # -- Key in the existingSecret containing the password value
   existingSecretPasswordKey: ""
   # -- Whether to use TLS connection connecting to ClickHouse
@@ -1817,9 +2008,19 @@ clickhouse:
     ##   - myRegistryKeySecretName
     ##
     pullSecrets: []
-
   # -- Toleration labels for clickhouse pod assignment
-  tolerations: []
+  nodeSelector:
+    if-posthog-pod: "true"
+  # -- Toleration labels for the plugin-server stack deployment.
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule" 
   # -- Affinity settings for clickhouse pod
   affinity: {}
   # -- Clickhouse resource requests/limits. See more at http://kubernetes.io/docs/user-guide/compute-resources/
@@ -1846,14 +2047,18 @@ clickhouse:
   #
   # For more details on usage, see https://posthog.com/docs/self-host/deploy/configuration#securing-clickhouse
   allowedNetworkIps:
+    - "::1"
+    - "127.0.0.1"
     - "10.0.0.0/8"
     - "172.16.0.0/12"
     - "192.168.0.0/16"
+    - "192.169.0.0/16"
+
 
   persistence:
     # -- Enable data persistence using PVC.
     enabled: true
-
+   
     # -- Use a manually managed Persistent Volume and Claim.
     #    If defined, PVC must be created manually before volume will be bound.
     #
@@ -1865,7 +2070,7 @@ clickhouse:
     #    If undefined (the default) or set to `null`, no storageClassName spec is
     #    set, choosing the default provisioner.
     #
-    storageClass: null
+    storageClass: "gp2"
 
     # -- Persistent Volume size
     size: 20Gi
@@ -1986,7 +2191,7 @@ clickhouse:
       - name: API_CREATE_INTEGRATION_TABLES
         value: "true"
       - name: BACKUPS_TO_KEEP_REMOTE
-        value: "0"
+        value: "0"      
       # Add settings for remote backup storage.
 
 ## External clickhouse configuration
@@ -2028,16 +2233,31 @@ cloudwatch:
 # Provide affinity for hooks if needed
 hooks:
   # -- Node labels for hooks.
-  nodeSelector: {}
-  # -- Toleration labels for hooks.
-  tolerations: []
+  nodeSelector:
+    if-posthog-pod: "true"
+  # -- Toleration labels for the plugin-server stack deployment.
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"  
   # -- Affinity settings for hooks.
   affinity: {}
   migrate:
     # -- Env variables for migate hooks
     env: []
     # -- Hook job resource limits/requests
-    resources: {}
+    resources:
+      requests:
+        memory: 2Gi
+        cpu: 1000m
+      limits:
+        memory: 4Gi
+        cpu: 2000m    
 
 serviceAccount:
   # -- Configures if a ServiceAccount with this name should be created
@@ -2066,6 +2286,7 @@ minio:
     # -- Use existing secret for credentials details (`auth.rootUser` and `auth.rootPassword` will be ignored and picked up from this secret). The secret has to contain the keys `root-user` and `root-password`)
     existingSecret:
   persistence:
+    storageClass: "gp2"
     # -- Enable MinIO data persistence using PVC.
     enabled: true
   # -- Comma, semi-colon or space separated list of buckets to create at initialization (only in standalone mode)

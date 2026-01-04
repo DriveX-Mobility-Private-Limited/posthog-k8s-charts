@@ -2094,7 +2094,14 @@ clickhouse:
     storageClass: "gp2"
 
     # -- Persistent Volume size
-    size: 20Gi
+    size: 50Gi
+    # ADD THIS - tells ClickHouse operator to keep PVCs
+    reclaimPolicy: Retain
+  
+  # ADD THIS SECTION - ClickHouse operator pod disruption budget
+  podDistribution:
+    - scope: Shard
+      type: ShardAntiAffinity
 
   ## -- Clickhouse user profile configuration.
   ## You can use this to override profile settings, for example `default/max_memory_usage: 40000000000`

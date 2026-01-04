@@ -1583,7 +1583,18 @@ postgresql:
     # -- PVC Storage Request for PostgreSQL volume.
     size: 10Gi
     storageClass: "gp2"
-
+  primary:
+    nodeSelector:
+      if-posthog-pod: "true"
+    tolerations:
+      - key: "if-monitoring-pod"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      - key: "if-posthog-pod"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
 externalPostgresql:
   # -- External PostgreSQL service host.
   postgresqlHost:
@@ -1807,18 +1818,18 @@ redis:
       ## allkeys-lru: evict keys by trying to remove the less recently used (LRU) keys first, in order
       ## to make space for the new data added
       - "--maxmemory-policy allkeys-lru"
-  nodeSelector:
-    if-posthog-pod: "true"
+    nodeSelector:
+      if-posthog-pod: "true"
   # -- Toleration labels for web stack deployment.
-  tolerations:
-    - key: "if-monitoring-pod"
-      operator: "Equal"
-      value: "true"
-      effect: "NoSchedule"
-    - key: "if-posthog-pod"
-      operator: "Equal"
-      value: "true"
-      effect: "NoSchedule"  
+    tolerations:
+      - key: "if-monitoring-pod"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"
+      - key: "if-posthog-pod"
+        operator: "Equal"
+        value: "true"
+        effect: "NoSchedule"  
 externalRedis:
   # -- External Redis host to use.
   host: ""
@@ -1955,7 +1966,17 @@ zookeeper:
     enabled: true
     storageClass: "gp2"
     size: 8Gi    
-
+  nodeSelector:
+    if-posthog-pod: "true"
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
 ###
 ###
 ### ---- CLICKHOUSE ----
@@ -2050,10 +2071,10 @@ clickhouse:
     - "::1"
     - "127.0.0.1"
     - "10.0.0.0/8"
+    - "10.0.0.0/16"
     - "172.16.0.0/12"
     - "192.168.0.0/16"
     - "192.169.0.0/16"
-
 
   persistence:
     # -- Enable data persistence using PVC.
@@ -3631,3 +3652,15 @@ clusterDomain: cluster.local
 # Whether to set a topologySpreadConstraint on all deployments
 # to balance pods between availability zones and nodes
 includeDefaultTopologySpreadConstraints: false
+clickhouse-operator:
+  nodeSelector:
+    if-posthog-pod: "true"
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"

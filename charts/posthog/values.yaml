@@ -403,7 +403,7 @@ plugins:
   # component deployments, pluginsIngestion, pluginsAsync, pluginsJobs, and
   # pluginsScheduler.
   image:
-    repository: yourusername/posthog-custom
+    repository: drivexdocker/posthog-custom
     tag: "1.43.1-kafka-fix"
     pullPolicy: IfNotPresent
   # -- Count of plugin-server pods to run. This setting is ignored if `plugins.hpa.enabled` is set to `true`.

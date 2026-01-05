@@ -403,9 +403,9 @@ plugins:
   # component deployments, pluginsIngestion, pluginsAsync, pluginsJobs, and
   # pluginsScheduler.
   image:
-    repository: drivexdocker/posthog-custom
+    repository: yourusername/posthog-custom
     tag: "1.43.1-kafka-fix"
-    pullPolicy: IfNotPresent  
+    pullPolicy: IfNotPresent
   # -- Count of plugin-server pods to run. This setting is ignored if `plugins.hpa.enabled` is set to `true`.
   replicacount: 1
 
@@ -1649,7 +1649,17 @@ _pgbouncer: &_pgbouncer
     enabled: false
     port: 9127
     image:
-
+      repository: prometheuscommunity/pgbouncer-exporter
+      tag: v0.4.1
+      pullPolicy: IfNotPresent
+      ## Optionally specify an array of imagePullSecrets.
+      ## Secrets must be manually created in the namespace.
+      ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
+      ## Example:
+      ## pullSecrets:
+      ##   - myRegistryKeySecretName
+      ##
+      pullSecrets: []
 
     # -- Resource limits for pgbouncer-exporter.
     resources: {}
@@ -2041,7 +2051,7 @@ clickhouse:
     ## pullSecrets:
     ##   - myRegistryKeySecretName
     ##
-    pullSecrets: []
+    # pullSecrets: []
   # -- Toleration labels for clickhouse pod assignment
   nodeSelector:
     if-posthog-pod: "true"

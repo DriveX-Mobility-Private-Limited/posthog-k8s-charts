@@ -256,7 +256,9 @@ web:
     # -- Set google oauth 2 whitelisted domains users can log in from.
     - name: SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_DOMAINS
       value: "posthog.com"
-
+    # --  Set CDP_API_URL  
+    - name: CDP_API_URL
+      value: "http://posthog-prod-plugins:6738"
   internalMetrics:
     # -- Deprecated: Whether to capture information on operation of posthog into posthog, exposed in /instance/status page
     capture: false

@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "posthog.fullname" . }}-plugins
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ template "posthog.fullname" . }}
+    chart: "{{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}"
+    release: "{{ .Release.Name }}"
+    heritage: "{{ .Release.Service }}"
+{{- if .Values.plugins.enabled }}
+spec:
+  type: ClusterIP
+  ports:
+  - port: 6738
+    targetPort: 6738
+    protocol: TCP
+    name: http
+  selector:
+    app: {{ template "posthog.fullname" . }}
+    release: {{ .Release.Name }}
+    role: plugins
+{{- end }}

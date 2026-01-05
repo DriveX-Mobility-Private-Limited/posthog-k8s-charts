@@ -448,10 +448,10 @@ plugins:
       value: "redis://posthog-prod-posthog-redis-master:6379"
     - name: DATABASE_URL
       value: "postgres://postgres:postgres@posthog-prod-pgbouncer:6543/posthog"
-    - name: LOGS_REDIS_TLS
-      value: "false"
-    - name: CDP_REDIS_TLS
-      value: "false"
+    # - name: LOGS_REDIS_TLS
+    #   value: "false"
+    # - name: CDP_REDIS_TLS
+    #   value: "false"
 
   # -- Resource limits for the plugin-server stack deployment.
   resources: {}

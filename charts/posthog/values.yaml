@@ -10,7 +10,7 @@ siteUrl:
 
 image:
   # -- PostHog image repository to use.
-  repository: drivexdocker/posthog
+  repository: drivexdocker/posthog-custom
   # -- PostHog image SHA to use (example: `sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4`).
   sha:
   # -- PostHog image tag to use (example: `release-1.43.0`).
@@ -19,7 +19,7 @@ image:
   default: ":latest"
   # -- PostHog image pull policy.
   pullPolicy: Always
-  ## Optionally specify an array of imagePullSecrets.
+  ## Optionally specify an array of imagePullSecrets.s
   ## Secrets must be manually created in the namespace.
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   ## Example:

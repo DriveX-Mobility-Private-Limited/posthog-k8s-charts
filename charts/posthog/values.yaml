@@ -1791,7 +1791,7 @@ pgbouncerRead:
 ###
 redis:
   # -- Whether to deploy a Redis server to satisfy the applications requirements. To use an external redis instance set this to `false` and configure the `externalRedis` parameters.
-  enabled: true
+  enabled: false
   image:
     repository: bitnamilegacy/valkey
     tag: "8.0.2-debian-12-r2"
@@ -1856,15 +1856,15 @@ redis:
         effect: "NoSchedule"  
 externalRedis:
   # -- External Redis host to use.
-  host: ""
+  host: "192.168.4.211"
   # -- External Redis port to use.
   port: 6379
   # -- Password for the external Redis. Ignored if `externalRedis.existingSecret` is set.
   password: ""
   # -- Name of an existing Kubernetes secret object containing the Redis password.
-  existingSecret: ""
+  existingSecret: "posthog-redis-secret"
   # -- Name of the key pointing to the password in your Kubernetes secret.
-  existingSecretPasswordKey: ""
+  existingSecretPasswordKey: "redis-password"
 
 externalSessionRecordingRedis: {}
   # -- External Redis host to use.

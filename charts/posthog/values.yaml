@@ -430,24 +430,26 @@ plugins:
 
   # -- Additional env variables to inject into the plugin-server stack deployment.
   env:
-    - name: KAFKA_HOSTS
-      value: "posthog-prod-posthog-kafka:9092"
-    - name: KAFKA_URL
-      value: "kafka://posthog-prod-posthog-kafka:9092"
-    - name: SESSION_RECORDING_KAFKA_HOSTS
-      value: "posthog-prod-posthog-kafka:9092"
-    - name: CLICKHOUSE_HOST
-      value: "chi-posthog-posthog-0-0"
-    - name: CLICKHOUSE_DATABASE
-      value: "posthog"
-    - name: CLICKHOUSE_USER
-      value: "admin"
-    - name: CLICKHOUSE_PASSWORD
-      value: "a1f31e03-c88e-4ca6-a2df-ad49183d15d9"
-    - name: REDIS_URL
-      value: "redis://posthog-prod-posthog-redis-master:6379"
-    - name: DATABASE_URL
-      value: "postgres://postgres:postgres@posthog-prod-pgbouncer:6543/posthog"
+    # - name: KAFKA_HOSTS
+    #   value: "posthog-prod-posthog-kafka:9092"
+    # - name: KAFKA_URL
+    #   value: "kafka://posthog-prod-posthog-kafka:9092"
+    # - name: SESSION_RECORDING_KAFKA_HOSTS
+    #   value: "posthog-prod-posthog-kafka:9092"
+    # - name: CLICKHOUSE_HOST
+    #   value: "chi-posthog-posthog-0-0"
+    # - name: CLICKHOUSE_DATABASE
+    #   value: "posthog"
+    # - name: CLICKHOUSE_USER
+    #   value: "admin"
+    # - name: CLICKHOUSE_PASSWORD
+    #   value: "a1f31e03-c88e-4ca6-a2df-ad49183d15d9"
+    # - name: REDIS_URL
+    #   value: "redis://posthog-prod-posthog-redis-master:6379"
+    # - name: DATABASE_URL
+    #   value: "postgres://postgres:postgres@posthog-prod-pgbouncer:6543/posthog"
+    LOGS_REDIS_TLS: 'false'
+    CDP_REDIS_TLS: 'false'    
 
   # -- Resource limits for the plugin-server stack deployment.
   resources: {}

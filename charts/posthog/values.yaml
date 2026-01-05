@@ -406,7 +406,7 @@ plugins:
   image:
     repository: drivexdocker/posthog-custom
     tag: "1.43.1-kafka-fix"
-    pullPolicy: IfNotPresent
+    pullPolicy: Always
   # -- Count of plugin-server pods to run. This setting is ignored if `plugins.hpa.enabled` is set to `true`.
   replicacount: 1
 

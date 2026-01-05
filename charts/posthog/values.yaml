@@ -1899,7 +1899,7 @@ kafka:
   externalZookeeper:
     # -- List of external zookeeper servers to use.
     servers:
-      - posthog-posthog-zookeeper:2181
+      - posthog-prod-posthog-zookeeper:2181
 
 externalKafka:
   # - External Kafka brokers. Ignored if `kafka.enabled` is set to `true`. Multiple brokers can be provided as array/list.

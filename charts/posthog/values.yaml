@@ -402,6 +402,7 @@ plugins:
   # jobs. To scale these components separately, instead use the individual
   # component deployments, pluginsIngestion, pluginsAsync, pluginsJobs, and
   # pluginsScheduler.
+  enabled: true
   image:
     repository: drivexdocker/posthog-custom
     tag: "1.43.1-kafka-fix"

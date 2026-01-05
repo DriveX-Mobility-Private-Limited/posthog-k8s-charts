@@ -403,8 +403,6 @@ plugins:
   # component deployments, pluginsIngestion, pluginsAsync, pluginsJobs, and
   # pluginsScheduler.
   enabled: true
-  image:
-    tag: "release-1.60.0"
   # -- Count of plugin-server pods to run. This setting is ignored if `plugins.hpa.enabled` is set to `true`.
   replicacount: 1
 

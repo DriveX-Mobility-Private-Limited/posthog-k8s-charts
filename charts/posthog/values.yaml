@@ -1655,15 +1655,15 @@ postgresql:
     tag: "17.3.0-debian-12-r1"
     pullPolicy: IfNotPresent  
   # -- PostgreSQL database name.
-  postgresqlDatabase: posthog
+  postgresqlDatabase: 
   # -- PostgreSQL database password.
-  postgresqlPassword: postgres
+  postgresqlPassword: 
   persistence:
     # -- Enable persistence using PVC.
     enabled: true
     # -- PVC Storage Request for PostgreSQL volume.
-    size: 10Gi
-    storageClass: "gp2"
+    size: 
+    storageClass: 
   master:
     nodeSelector:
       if-posthog-pod: "true"
@@ -2080,12 +2080,12 @@ clickhouse:
   # -- Clickhouse user
   user: admin
   # -- Clickhouse password
-  password: a1f31e03-c88e-4ca6-a2df-ad49183d15d9
+  password: ""
   # -- Clickhouse existing secret name that needs to be in the namespace where
   # posthog is deployed into. Will not use the above password value if set
-  existingSecret: "" 
+  existingSecret: "posthog-clickhouse-secret" 
   # -- Key in the existingSecret containing the password value
-  existingSecretPasswordKey: ""
+  existingSecretPasswordKey: "clickhouse-password"
   # -- Whether to use TLS connection connecting to ClickHouse
   secure: false
   # -- Whether to verify TLS certificate on connection to ClickHouse

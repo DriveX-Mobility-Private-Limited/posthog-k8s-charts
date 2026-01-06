@@ -57,8 +57,7 @@ env:
     value: "1"
   - name: SKIP_SERVICE_VERSION_REQUIREMENTS
     value: "1"   
-  - name: REDIS_DB
-    value: "1"    
+
 # env:
 #   - name: FOO
 #     value: bar
@@ -365,6 +364,17 @@ worker:
       value: "1"
     - name: SKIP_ASYNC_MIGRATIONS
       value: "1"
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: posthog-redis-secret
+          key: redis-password
+    - name: REDIS_URL
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/1"
+    - name: CELERY_BROKER_URL
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/1"
+    - name: CELERY_RESULT_BACKEND
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/1"    
   # Override the command to bypass the hardcoded script
   command:
     - /bin/bash

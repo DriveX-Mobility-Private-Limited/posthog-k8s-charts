@@ -1856,7 +1856,7 @@ redis:
         effect: "NoSchedule"  
 externalRedis:
   # -- External Redis host to use.
-  host: "192.168.4.211"
+  host: "192.168.4.81"
   # -- External Redis port to use.
   port: 6379
   # -- Password for the external Redis. Ignored if `externalRedis.existingSecret` is set.

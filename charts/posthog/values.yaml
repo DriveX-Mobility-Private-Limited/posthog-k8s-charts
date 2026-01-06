@@ -370,11 +370,11 @@ worker:
           name: posthog-redis-secret
           key: redis-password
     - name: REDIS_URL
-      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/1"
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/48"
     - name: CELERY_BROKER_URL
-      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/1"
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/48"
     - name: CELERY_RESULT_BACKEND
-      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/1"    
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/48"    
   # Override the command to bypass the hardcoded script
   command:
     - /bin/bash

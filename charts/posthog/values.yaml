@@ -97,7 +97,14 @@ events:
     maxUnavailable: 25%
 
   # -- Additional env variables to inject into the events stack, uses `web.env` if empty.
-  env: []
+  env:
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: posthog-redis-secret
+          key: redis-password
+    - name: REDIS_URL
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
 
   # -- Container security context for the events stack HorizontalPodAutoscaler.
   securityContext:
@@ -260,6 +267,14 @@ web:
     # --  Set CDP_API_URL  
     - name: CDP_API_URL
       value: "http://posthog-prod-plugins:6738"
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: posthog-redis-secret
+          key: redis-password
+    - name: REDIS_URL
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
+          
   internalMetrics:
     # -- Deprecated: Whether to capture information on operation of posthog into posthog, exposed in /instance/status page
     capture: false
@@ -458,14 +473,22 @@ plugins:
       value: "admin"
     - name: CLICKHOUSE_PASSWORD
       value: "a1f31e03-c88e-4ca6-a2df-ad49183d15d9"
-    - name: REDIS_URL
-      value: "redis://posthog-prod-posthog-redis-master:6379"
-    - name: DATABASE_URL
-      value: "postgres://postgres:postgres@posthog-prod-pgbouncer:6543/posthog"
+    # - name: REDIS_URL
+    #   value: "redis://posthog-prod-posthog-redis-master:6379"
+    # - name: DATABASE_URL
+    #   value: "postgres://postgres:postgres@posthog-prod-pgbouncer:6543/posthog"
     # - name: LOGS_REDIS_TLS
     #   value: "false"
     # - name: CDP_REDIS_TLS
     #   value: "false"
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: posthog-redis-secret
+          key: redis-password
+    - name: REDIS_URL
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
+
 
   # -- Resource limits for the plugin-server stack deployment.
   resources: {}
@@ -1238,7 +1261,7 @@ pluginsJobs:
 pluginsScheduler:
   # -- Whether to install the PostHog plugin-server scheduler capability as an
   # individual workload.
-  enabled: false
+  enabled: true
 
   # -- Count of plugin-server-async pods to run. This setting is ignored if `pluginsScheduler.hpa.enabled` is set to `true`.
   replicacount: 1
@@ -1264,7 +1287,14 @@ pluginsScheduler:
     maxUnavailable: 25%
 
   # -- Additional env variables to inject into the plugin-server stack deployment.
-  env: []
+  env:
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: posthog-redis-secret
+          key: redis-password
+    - name: REDIS_URL
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
 
   # -- Resource limits for the plugin-server stack deployment.
   resources: {}

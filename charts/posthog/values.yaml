@@ -274,6 +274,11 @@ web:
           key: redis-password
     - name: REDIS_URL
       value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
+    - name: DATABASE_URL
+      valueFrom:
+        secretKeyRef:
+          name: posthog-postgresql-secret
+          key: postgresql-url      
           
   internalMetrics:
     # -- Deprecated: Whether to capture information on operation of posthog into posthog, exposed in /instance/status page
@@ -389,7 +394,12 @@ worker:
     - name: CELERY_BROKER_URL
       value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
     - name: CELERY_RESULT_BACKEND
-      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"    
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
+    - name: DATABASE_URL
+      valueFrom:
+        secretKeyRef:
+          name: posthog-postgresql-secret
+          key: postgresql-url          
   # Override the command to bypass the hardcoded script
   command:
     - /bin/bash
@@ -473,6 +483,11 @@ plugins:
       value: "admin"
     - name: CLICKHOUSE_PASSWORD
       value: "a1f31e03-c88e-4ca6-a2df-ad49183d15d9"
+    - name: DATABASE_URL
+      valueFrom:
+        secretKeyRef:
+          name: posthog-postgresql-secret
+          key: postgresql-url
     # - name: REDIS_URL
     #   value: "redis://posthog-prod-posthog-redis-master:6379"
     # - name: DATABASE_URL
@@ -1632,7 +1647,7 @@ ingress-nginx:
 ###
 postgresql:
   # -- Whether to deploy a PostgreSQL server to satisfy the applications requirements. To use an external PostgreSQL instance set this to `false` and configure the `externalPostgresql` parameters.
-  enabled: true
+  enabled: false
   # -- Name override for PostgreSQL app.
   nameOverride: posthog-postgresql
   image:
@@ -1663,20 +1678,19 @@ postgresql:
         effect: "NoSchedule"
 externalPostgresql:
   # -- External PostgreSQL service host.
-  postgresqlHost:
+  postgresqlHost: "10.0.2.31"
   # -- External PostgreSQL service port.
   postgresqlPort: 5432
   # -- External PostgreSQL service database name.
-  postgresqlDatabase:
+  postgresqlDatabase: "posthog"
   # -- External PostgreSQL service user.
-  postgresqlUsername:
+  postgresqlUsername: "posthog"
   # -- External PostgreSQL service password. Either this or `externalPostgresql.existingSecret` must be set.
-  postgresqlPassword:
+  postgresqlPassword: ""
   # -- Name of an existing Kubernetes secret object containing the PostgreSQL password
-  existingSecret:
+  existingSecret: "posthog-postgresql-secret"
   # -- Name of the key pointing to the password in your Kubernetes secret
-  existingSecretPasswordKey: postgresql-password
-
+  existingSecretPasswordKey: "postgresql-password"
 ###
 ###
 ### ---- PGBOUNCER ----

@@ -469,12 +469,14 @@ plugins:
 
   # -- Additional env variables to inject into the plugin-server stack deployment.
   env:
+      # Kafka configuration
     - name: KAFKA_HOSTS
       value: "posthog-prod-posthog-kafka:9092"
     - name: KAFKA_URL
       value: "kafka://posthog-prod-posthog-kafka:9092"
     - name: SESSION_RECORDING_KAFKA_HOSTS
       value: "posthog-prod-posthog-kafka:9092"
+    # ClickHouse configuration
     - name: CLICKHOUSE_HOST
       value: "chi-posthog-posthog-0-0"
     - name: CLICKHOUSE_DATABASE
@@ -482,12 +484,22 @@ plugins:
     - name: CLICKHOUSE_USER
       value: "admin"
     - name: CLICKHOUSE_PASSWORD
-      value: "a1f31e03-c88e-4ca6-a2df-ad49183d15d9"
+      valueFrom:
+        secretKeyRef:
+          name: posthog-clickhouse-secret
+          key: clickhouse-password
     - name: DATABASE_URL
       valueFrom:
         secretKeyRef:
           name: posthog-postgresql-secret
           key: postgresql-url
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: posthog-redis-secret
+          key: redis-password
+    - name: REDIS_URL
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
     # - name: REDIS_URL
     #   value: "redis://posthog-prod-posthog-redis-master:6379"
     # - name: DATABASE_URL
@@ -496,14 +508,6 @@ plugins:
     #   value: "false"
     # - name: CDP_REDIS_TLS
     #   value: "false"
-    - name: REDIS_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: posthog-redis-secret
-          key: redis-password
-    - name: REDIS_URL
-      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
-
 
   # -- Resource limits for the plugin-server stack deployment.
   resources: {}

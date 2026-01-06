@@ -57,6 +57,8 @@ env:
     value: "1"
   - name: SKIP_SERVICE_VERSION_REQUIREMENTS
     value: "1"   
+  - name: REDIS_DB
+    value: "1"    
 # env:
 #   - name: FOO
 #     value: bar

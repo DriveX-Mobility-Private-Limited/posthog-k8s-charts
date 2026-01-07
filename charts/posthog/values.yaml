@@ -59,6 +59,9 @@ env:
     value: "1"   
   - name: SITE_URL
     value: "https://posthog.drivex.in"
+  - name: LIVESTREAM_HOST
+    value: "https://posthog.drivex.in"    
+    
 # env:
 #   - name: FOO
 #     value: bar

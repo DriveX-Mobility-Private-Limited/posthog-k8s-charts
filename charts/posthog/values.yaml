@@ -57,7 +57,8 @@ env:
     value: "1"
   - name: SKIP_SERVICE_VERSION_REQUIREMENTS
     value: "1"   
-
+  - name: SITE_URL
+    value: "https://posthog.drivex.in"
 # env:
 #   - name: FOO
 #     value: bar

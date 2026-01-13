@@ -92,8 +92,13 @@ spec:
 
       containers:
       - name: {{ .root.Chart.Name }}-{{ .name }}
+        {{- if .params.image }}
+        image: {{ .params.image.repository }}:{{ .params.image.tag }}
+        imagePullPolicy: {{ .params.image.pullPolicy | default "IfNotPresent" }}
+        {{- else }}
         image: {{ template "posthog.image.fullPath" .root }}
         imagePullPolicy: {{ .root.Values.image.pullPolicy }}
+        {{- end }}
         command:
           - ./bin/plugin-server
           - --no-restart-loop

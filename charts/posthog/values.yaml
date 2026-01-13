@@ -1279,7 +1279,7 @@ pluginsJobs:
 pluginsScheduler:
   # -- Whether to install the PostHog plugin-server scheduler capability as an
   # individual workload.
-  enabled: true
+  enabled: false
 
   # -- Count of plugin-server-async pods to run. This setting is ignored if `pluginsScheduler.hpa.enabled` is set to `true`.
   replicacount: 1

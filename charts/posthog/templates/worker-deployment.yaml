@@ -87,9 +87,14 @@ spec:
       - name: {{ $.Chart.Name }}-workers
         image: {{ template "posthog.image.fullPath" $ }}
         imagePullPolicy: {{ $.Values.image.pullPolicy }}
+        {{- if $.Values.worker.command }}
+        command:
+{{ toYaml $.Values.worker.command | indent 10 }}
+        {{- else }}
         command:
           - ./bin/docker-worker-celery
           - --with-scheduler
+        {{- end }}
         ports:
         - containerPort: {{ $.Values.service.internalPort }}
         # Expose the port on which Prometheus /metrics endpoint resides

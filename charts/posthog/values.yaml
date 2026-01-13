@@ -509,8 +509,8 @@ plugins:
           key: redis-password
     - name: REDIS_URL
       value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
-    # - name: SITE_URL
-    #   value: "https://posthog.drivex.in"      
+    - name: SITE_URL
+      value: "https://posthog.drivex.in"      
 
   # -- Resource limits for the plugin-server stack deployment.
   resources: {}

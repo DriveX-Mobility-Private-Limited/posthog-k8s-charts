@@ -443,6 +443,10 @@ worker:
     enabled: false
 
 plugins:
+  image:
+    repository: drivexdocker/posthog-custom
+    tag: 1.43.1-kafka-fix
+    pullPolicy: IfNotPresent
   # -- Whether to install the PostHog plugin-server stack or not.
   # This service handles data ingestion into ClickHouse, running apps and async
   # jobs. To scale these components separately, instead use the individual

@@ -388,6 +388,8 @@ worker:
       value: "1"
     - name: SKIP_ASYNC_MIGRATIONS
       value: "1"
+    - name: RUN_ASYNC_MIGRATIONS
+      value: "0"      
     - name: REDIS_PASSWORD
       valueFrom:
         secretKeyRef:

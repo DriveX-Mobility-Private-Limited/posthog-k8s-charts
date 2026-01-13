@@ -407,16 +407,15 @@ worker:
           name: posthog-postgresql-secret
           key: postgresql-url          
   # Override the command to bypass the hardcoded script
-  # command:
-  #   - /bin/bash
-  #   - -c
-  #   - |
-  #     export SKIP_ASYNC_MIGRATIONS_SETUP=1
-  #     export SKIP_ASYNC_MIGRATIONS=1
-  #     export RUN_ASYNC_MIGRATIONS=0
-  #     source ./bin/celery-queues.env
-  #     ./bin/docker-worker-beat &
-  #     celery -A posthog worker -Ofair -n node@%h --without-mingle --without-heartbeat
+  command:
+    - /bin/bash
+    - -c
+    - |
+      export SKIP_ASYNC_MIGRATIONS_SETUP=1
+      export SKIP_ASYNC_MIGRATIONS=1
+      source ./bin/celery-queues.env
+      ./bin/docker-worker-beat &
+      celery -A posthog worker -Ofair -n node@%h --without-mingle --without-heartbeat
   # -- Resource limits for the worker stack deployment.
   resources: {}
 
@@ -506,16 +505,8 @@ plugins:
           key: redis-password
     - name: REDIS_URL
       value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
-    - name: SITE_URL
-      value: "https://posthog.drivex.in"      
-    # - name: REDIS_URL
-    #   value: "redis://posthog-prod-posthog-redis-master:6379"
-    # - name: DATABASE_URL
-    #   value: "postgres://postgres:postgres@posthog-prod-pgbouncer:6543/posthog"
-    # - name: LOGS_REDIS_TLS
-    #   value: "false"
-    # - name: CDP_REDIS_TLS
-    #   value: "false"
+    # - name: SITE_URL
+    #   value: "https://posthog.drivex.in"      
 
   # -- Resource limits for the plugin-server stack deployment.
   resources: {}

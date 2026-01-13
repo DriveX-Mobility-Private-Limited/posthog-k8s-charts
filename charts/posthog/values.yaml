@@ -1590,8 +1590,7 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-buffering: "off"
     nginx.ingress.kubernetes.io/configuration-snippet: |
       proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection "upgrade";
-      proxy_http_version 1.1;        
+      proxy_set_header Connection "upgrade";       
     # Add any other annotations your setup needs  
   # -- TLS secret to be used by the ingress.
   secretName:

@@ -60,7 +60,7 @@ env:
   # - name: SITE_URL
   #   value: "https://posthog.drivex.in"
   - name: LIVESTREAM_HOST
-    value: "https://posthog.drivex.in"    
+    value: "https://posthog-v1.drivex.dev"    
     
 # env:
 #   - name: FOO
@@ -108,7 +108,7 @@ events:
           name: posthog-redis-secret
           key: redis-password
     - name: REDIS_URL
-      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/1"
 
   # -- Container security context for the events stack HorizontalPodAutoscaler.
   securityContext:
@@ -270,14 +270,14 @@ web:
       value: "posthog.com"
     # --  Set CDP_API_URL  
     - name: CDP_API_URL
-      value: "http://posthog-prod-plugins:6738"
+      value: "http://posthog-dev-plugins:6738"
     - name: REDIS_PASSWORD
       valueFrom:
         secretKeyRef:
           name: posthog-redis-secret
           key: redis-password
     - name: REDIS_URL
-      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/1"
     - name: DATABASE_URL
       valueFrom:
         secretKeyRef:
@@ -396,11 +396,11 @@ worker:
           name: posthog-redis-secret
           key: redis-password
     - name: REDIS_URL
-      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/1"
     - name: CELERY_BROKER_URL
-      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/1"
     - name: CELERY_RESULT_BACKEND
-      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/1"
     - name: DATABASE_URL
       valueFrom:
         secretKeyRef:
@@ -480,11 +480,11 @@ plugins:
   env:
       # Kafka configuration
     - name: KAFKA_HOSTS
-      value: "posthog-prod-posthog-kafka:9092"
+      value: "posthog-dev-posthog-kafka:9092"
     - name: KAFKA_URL
-      value: "kafka://posthog-prod-posthog-kafka:9092"
+      value: "kafka://posthog-dev-posthog-kafka:9092"
     - name: SESSION_RECORDING_KAFKA_HOSTS
-      value: "posthog-prod-posthog-kafka:9092"
+      value: "posthog-dev-posthog-kafka:9092"
     # ClickHouse configuration
     - name: CLICKHOUSE_HOST
       value: "chi-posthog-posthog-0-0"
@@ -508,9 +508,9 @@ plugins:
           name: posthog-redis-secret
           key: redis-password
     - name: REDIS_URL
-      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/1"
     - name: SITE_URL
-      value: "https://posthog.drivex.in"      
+      value: "https://posthog-v1.drivex.dev"      
 
   # -- Resource limits for the plugin-server stack deployment.
   resources: {}
@@ -1571,7 +1571,7 @@ ingress:
     # -- If true, will force a https redirect when accessed over http
     forceHttps: true
     # -- Specifies the name of the tls secret to be used by the ingress. If not specified a managed certificate will be generated.
-    secretName: "posthog-prod-tls"
+    secretName: "posthog-dev-tls"
   # -- Whether to enable letsencrypt. Defaults to true if hostname is defined and nginx and cert-manager are enabled otherwise false.
   letsencrypt:
   nginx:
@@ -1586,7 +1586,7 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
-    nginx.ingress.kubernetes.io/websocket-services: "posthog-prod-web"
+    nginx.ingress.kubernetes.io/websocket-services: "posthog-dev-web"
     nginx.ingress.kubernetes.io/proxy-buffering: "off"
     nginx.ingress.kubernetes.io/configuration-snippet: |
       proxy_set_header Upgrade $http_upgrade;
@@ -2000,7 +2000,7 @@ kafka:
   externalZookeeper:
     # -- List of external zookeeper servers to use.
     servers:
-      - posthog-prod-posthog-zookeeper:2181
+      - posthog-dev-posthog-zookeeper:2181
 
 externalKafka:
   # - External Kafka brokers. Ignored if `kafka.enabled` is set to `true`. Multiple brokers can be provided as array/list.

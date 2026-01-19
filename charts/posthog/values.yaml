@@ -1662,7 +1662,7 @@ ingress-nginx:
 ###
 postgresql:
   # -- Whether to deploy a PostgreSQL server to satisfy the applications requirements. To use an external PostgreSQL instance set this to `false` and configure the `externalPostgresql` parameters.
-  enabled: true
+  enabled: false
   # -- Name override for PostgreSQL app.
   nameOverride: posthog-postgresql
   image:

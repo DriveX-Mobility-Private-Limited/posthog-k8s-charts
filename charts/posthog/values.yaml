@@ -1693,7 +1693,7 @@ postgresql:
         effect: "NoSchedule"
 externalPostgresql:
   # -- External PostgreSQL service host.
-  postgresqlHost: "10.0.2.31"
+  postgresqlHost: "192.169.2.44"
   # -- External PostgreSQL service port.
   postgresqlPort: 5432
   # -- External PostgreSQL service database name.
@@ -1714,7 +1714,7 @@ externalPostgresql:
 
 _pgbouncer: &_pgbouncer 
 # -- Whether to deploy a PgBouncer service to satisfy the applications requirements.
-  enabled: false
+  enabled: ture
 
   exporter:
     # -- Whether to install a Prometheus export as a sidecar

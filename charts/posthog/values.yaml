@@ -58,7 +58,7 @@ env:
   - name: SKIP_SERVICE_VERSION_REQUIREMENTS
     value: "1"   
   # - name: SITE_URL
-  #   value: "https://posthog.drivex.in"
+  #   value: "https://posthog-v1.drivex.dev"
   - name: LIVESTREAM_HOST
     value: "https://posthog-v1.drivex.dev"    
     
@@ -68,7 +68,7 @@ env:
 
 migrate:
   # -- Whether to install the PostHog migrate job or not.
-  enabled: false
+  enabled: true
 
 events:
   # -- Whether to install the PostHog events stack or not.
@@ -1564,7 +1564,7 @@ ingress:
   # -- Ingress handler type. Defaults to `nginx` if nginx is enabled and to `clb` on gcp.
   type:
   # -- URL to address your PostHog installation. You will need to set up DNS after installation
-  hostname: "posthog.drivex.in"
+  hostname: "posthog-v1.drivex.dev"
   gcp:
     # -- Specifies the name of the global IP address resource to be associated with the google clb
     ip_name: "posthog"

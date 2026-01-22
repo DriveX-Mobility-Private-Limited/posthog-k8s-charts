@@ -1380,7 +1380,7 @@ toolbox:
   resources: {}
 temporal:
   enabled: true
-  
+
 temporalPyWorker:
   # -- Whether to install the PostHog Temporal Python worker stack or not.
   enabled: true
@@ -1424,7 +1424,19 @@ temporalPyWorker:
     maxUnavailable: 25%
 
   # -- Additional env variables to inject into the worker stack deployment.
-  env: []
+  env:
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: posthog-redis-secret
+          key: redis-password
+    - name: REDIS_URL
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
+    - name: DATABASE_URL
+      valueFrom:
+        secretKeyRef:
+          name: posthog-postgresql-secret
+          key: postgresql-url  
 
   # -- Resource limits for the worker stack deployment.
   resources: {}
@@ -2034,7 +2046,7 @@ externalSessionRecordingKafka:
 ###
 externalTemporal:
   # - External Temporal scheduler's hostname
-  host: ""
+  host: "posthog-temporalio-dev-frontend.posthog.svc.cluster.local"
   # - External Temporal scheduler's port
   port: 7233
   # - Namespace to register into

@@ -1425,8 +1425,11 @@ temporalPyWorker:
 
   # -- Additional env variables to inject into the worker stack deployment.
   env:
+  
     - name: TEMPORAL_NAMESPACE
       value: "posthog"
+    - name: POSTHOG_REDIS_HOST
+      value: "192.168.4.81"      
     - name: REDIS_PASSWORD
       valueFrom:
         secretKeyRef:

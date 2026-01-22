@@ -1425,10 +1425,6 @@ temporalPyWorker:
 
   # -- Additional env variables to inject into the worker stack deployment.
   env:
-    - name: TEMPORAL_HOST
-      value: "posthog-temporalio-dev-frontend.posthog.svc.cluster.local"
-    - name: TEMPORAL_PORT
-      value: "7233"
     - name: TEMPORAL_NAMESPACE
       value: "posthog"
     - name: REDIS_PASSWORD

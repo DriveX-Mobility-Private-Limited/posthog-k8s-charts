@@ -1381,11 +1381,22 @@ toolbox:
 
 temporalPyWorker:
   # -- Whether to install the PostHog Temporal Python worker stack or not.
-  enabled: false
+  enabled: true
 
   # -- Count of worker pods to run. This setting is ignored if `worker.hpa.enabled` is set to `true`.
   replicacount: 1
-
+  
+  nodeSelector:
+    if-posthog-pod: "true"
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
   # -- The grace period for the worker pods. This is slightly larger than the
   # default 5 minutes of the worker by default.
   terminationGracePeriodSeconds: 310

@@ -1436,7 +1436,7 @@ temporalPyWorker:
           name: posthog-redis-secret
           key: redis-password
     - name: REDIS_URL
-      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/48"
     - name: DATABASE_URL
       valueFrom:
         secretKeyRef:

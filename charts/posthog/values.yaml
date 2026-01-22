@@ -1378,14 +1378,16 @@ toolbox:
   env: []
   # -- Resource limits for the toolbox deployment.
   resources: {}
-
+temporal:
+  enabled: true
+  
 temporalPyWorker:
   # -- Whether to install the PostHog Temporal Python worker stack or not.
   enabled: true
 
   # -- Count of worker pods to run. This setting is ignored if `worker.hpa.enabled` is set to `true`.
   replicacount: 1
-  
+
   nodeSelector:
     if-posthog-pod: "true"
   tolerations:

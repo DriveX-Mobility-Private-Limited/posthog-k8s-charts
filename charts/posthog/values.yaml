@@ -43,8 +43,8 @@ posthogSecretKey:
 
 # -- Environment variables to inject into every PostHog deployment.
 env:
-  # - name: CLICKHOUSE_MIGRATIONS_CLUSTER
-  #   value: "posthog"
+  - name: CLICKHOUSE_MIGRATIONS_CLUSTER
+    value: "posthog"
   # - name: SKIP_ASYNC_MIGRATIONS_SETUP
   #   value: "1"
   # - name: SKIP_ASYNC_MIGRATIONS
@@ -104,6 +104,9 @@ events:
   env:
     - name: CLICKHOUSE_MIGRATIONS_CLUSTER
       value: "posthog"
+    - name: SKIP_ASYNC_MIGRATIONS_SETUP
+      value: "1"
+      value: "0"      
     - name: REDIS_PASSWORD
       valueFrom:
         secretKeyRef:

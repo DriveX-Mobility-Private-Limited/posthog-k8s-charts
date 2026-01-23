@@ -45,22 +45,29 @@ posthogSecretKey:
 env:
   - name: CLICKHOUSE_MIGRATIONS_CLUSTER
     value: "posthog"
-  # - name: SKIP_ASYNC_MIGRATIONS_SETUP
-  #   value: "1"
-  # - name: SKIP_ASYNC_MIGRATIONS
-  #   value: "1"
-  # - name: RUN_ASYNC_MIGRATIONS
-  #   value: "0"
-  # - name: POSTHOG_SKIP_MIGRATION_CHECKS
-  #   value: "1"
-  # - name: SKIP_SERVICE_VERSION_REQUIREMENTS
-  #   value: "1"
   - name: CLICKHOUSE_REPLICATION
-    value: "false"       
-  # - name: SITE_URL
-  #   value: "https://posthog-v1.drivex.dev"
+    value: "false"
+  - name: CLICKHOUSE_HOST
+    value: "chi-posthog-posthog-0-0"
+  - name: CLICKHOUSE_DATABASE
+    value: "posthog"
+  - name: CLICKHOUSE_USER
+    value: "admin"
+  - name: CLICKHOUSE_SECURE
+    value: "false"
+  - name: CLICKHOUSE_VERIFY
+    value: "false"
+  # ADD THESE - matching Docker Compose
+  - name: CLICKHOUSE_APP_USER
+    value: "app"
+  - name: CLICKHOUSE_APP_PASSWORD
+    value: "apppass"
+  - name: CLICKHOUSE_API_USER
+    value: "api"
+  - name: CLICKHOUSE_API_PASSWORD
+    value: "apipass"
   - name: LIVESTREAM_HOST
-    value: "https://posthog-v1.drivex.dev"    
+    value: "https://posthog-v1.drivex.dev"
     
 # env:
 #   - name: FOO
@@ -102,14 +109,6 @@ events:
 
   # -- Additional env variables to inject into the events stack, uses `web.env` if empty.
   env:
-    - name: CLICKHOUSE_MIGRATIONS_CLUSTER
-      value: "posthog"
-    - name: SKIP_ASYNC_MIGRATIONS_SETUP
-      value: "1"
-    - name: SKIP_ASYNC_MIGRATIONS
-      value: "1"
-    - name: RUN_ASYNC_MIGRATIONS
-      value: "0"    
     - name: REDIS_PASSWORD
       valueFrom:
         secretKeyRef:
@@ -2142,6 +2141,27 @@ clickhouse:
   secure: false
   # -- Whether to verify TLS certificate on connection to ClickHouse
   verify: false
+  additionalUsersConfig: |
+    <clickhouse>
+      <users>
+        <app>
+          <password>apppass</password>
+          <networks>
+            <ip>::/0</ip>
+          </networks>
+          <profile>default</profile>
+          <quota>default</quota>
+        </app>
+        <api>
+          <password>apipass</password>
+          <networks>
+            <ip>::/0</ip>
+          </networks>
+          <profile>default</profile>
+          <quota>default</quota>
+        </api>
+      </users>
+    </clickhouse>  
   # -- List of external Zookeeper servers to use.
   # externalZookeeper:
   #   servers:

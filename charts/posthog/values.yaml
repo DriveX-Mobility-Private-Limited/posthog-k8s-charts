@@ -341,10 +341,10 @@ web:
     successThreshold: 1
     # -- The startup probe timeout seconds
     timeoutSeconds: 30
-  extraInitContainers:
-    - name: skip-async-migrations
-      image: busybox
-      command: ['sh', '-c', 'echo "Skipping async migrations"']
+  # extraInitContainers:
+  #   - name: skip-async-migrations
+  #     image: busybox
+  #     command: ['sh', '-c', 'echo "Skipping async migrations"']
   # -- Container security context for web stack deployment.
   securityContext:
     enabled: false
@@ -407,15 +407,15 @@ worker:
           name: posthog-postgresql-secret
           key: postgresql-url          
   # Override the command to bypass the hardcoded script
-  command:
-    - /bin/bash
-    - -c
-    - |
-      export SKIP_ASYNC_MIGRATIONS_SETUP=1
-      export SKIP_ASYNC_MIGRATIONS=1
-      source ./bin/celery-queues.env
-      ./bin/docker-worker-beat &
-      celery -A posthog worker -Ofair -n node@%h --without-mingle --without-heartbeat
+  # command:
+  #   - /bin/bash
+  #   - -c
+  #   - |
+  #     # export SKIP_ASYNC_MIGRATIONS_SETUP=1
+  #     # export SKIP_ASYNC_MIGRATIONS=1
+  #     # source ./bin/celery-queues.env
+  #     # ./bin/docker-worker-beat &
+  #     # celery -A posthog worker -Ofair -n node@%h --without-mingle --without-heartbeat
   # -- Resource limits for the worker stack deployment.
   resources: {}
 

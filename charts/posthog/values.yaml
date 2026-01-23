@@ -102,6 +102,8 @@ events:
 
   # -- Additional env variables to inject into the events stack, uses `web.env` if empty.
   env:
+    - name: CLICKHOUSE_MIGRATIONS_CLUSTER
+      value: "posthog"
     - name: REDIS_PASSWORD
       valueFrom:
         secretKeyRef:

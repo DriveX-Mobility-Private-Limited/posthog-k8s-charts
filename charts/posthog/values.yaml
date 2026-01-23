@@ -52,7 +52,7 @@ env:
   - name: RUN_ASYNC_MIGRATIONS
     value: "0"
   - name: CLICKHOUSE_REPLICATION
-    value: "false"
+    value: "true"
   - name: POSTHOG_SKIP_MIGRATION_CHECKS
     value: "1"
   - name: SKIP_SERVICE_VERSION_REQUIREMENTS

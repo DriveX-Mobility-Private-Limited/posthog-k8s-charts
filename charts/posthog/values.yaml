@@ -2171,7 +2171,12 @@ clickhouse:
           <quota>default</quota>
         </api>
       </users>
-    </clickhouse>  
+      <macros>
+        <hostClusterType>standalone</hostClusterType>
+        <shard>01</shard>
+        <replica>01</replica>
+      </macros>
+    </clickhouse>    
   # -- List of external Zookeeper servers to use.
   # externalZookeeper:
   #   servers:

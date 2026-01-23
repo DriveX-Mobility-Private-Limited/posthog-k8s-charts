@@ -2135,7 +2135,7 @@ clickhouse:
   # -- Which namespace to install clickhouse and the `clickhouse-operator` to (defaults to namespace chart is installed to)
   namespace: "posthog"
   # -- Clickhouse cluster
-  cluster: posthog
+  # cluster: posthog
   # -- Clickhouse database
   database: posthog
   # -- Clickhouse user

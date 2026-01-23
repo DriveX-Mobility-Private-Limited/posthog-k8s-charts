@@ -106,7 +106,10 @@ events:
       value: "posthog"
     - name: SKIP_ASYNC_MIGRATIONS_SETUP
       value: "1"
-      value: "0"      
+    - name: SKIP_ASYNC_MIGRATIONS
+      value: "1"
+    - name: RUN_ASYNC_MIGRATIONS
+      value: "0"    
     - name: REDIS_PASSWORD
       valueFrom:
         secretKeyRef:

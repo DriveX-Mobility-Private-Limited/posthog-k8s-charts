@@ -2389,7 +2389,9 @@ clickhouse:
       - name: BACKUPS_TO_KEEP_REMOTE
         value: "0"      
       # Add settings for remote backup storage.
-
+  layout:
+    shardsCount: 1
+    replicasCount: 1
 ## External clickhouse configuration
 ##
 externalClickhouse:

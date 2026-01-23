@@ -43,20 +43,20 @@ posthogSecretKey:
 
 # -- Environment variables to inject into every PostHog deployment.
 env:
-  - name: CLICKHOUSE_MIGRATIONS_CLUSTER
-    value: "posthog"
-  - name: SKIP_ASYNC_MIGRATIONS_SETUP
-    value: "1"
-  - name: SKIP_ASYNC_MIGRATIONS
-    value: "1"
-  - name: RUN_ASYNC_MIGRATIONS
-    value: "0"
-  - name: CLICKHOUSE_REPLICATION
-    value: "true"
-  - name: POSTHOG_SKIP_MIGRATION_CHECKS
-    value: "1"
-  - name: SKIP_SERVICE_VERSION_REQUIREMENTS
-    value: "1"   
+  # - name: CLICKHOUSE_MIGRATIONS_CLUSTER
+  #   value: "posthog"
+  # - name: SKIP_ASYNC_MIGRATIONS_SETUP
+  #   value: "1"
+  # - name: SKIP_ASYNC_MIGRATIONS
+  #   value: "1"
+  # - name: RUN_ASYNC_MIGRATIONS
+  #   value: "0"
+  # - name: POSTHOG_SKIP_MIGRATION_CHECKS
+  #   value: "1"
+  # - name: SKIP_SERVICE_VERSION_REQUIREMENTS
+  #   value: "1"
+  # - name: CLICKHOUSE_REPLICATION
+  #   value: "false"       
   # - name: SITE_URL
   #   value: "https://posthog-v1.drivex.dev"
   - name: LIVESTREAM_HOST

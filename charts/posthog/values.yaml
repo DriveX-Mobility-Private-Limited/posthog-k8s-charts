@@ -1693,7 +1693,7 @@ postgresql:
         effect: "NoSchedule"
 externalPostgresql:
   # -- External PostgreSQL service host.
-  postgresqlHost: "192.169.2.44"
+  postgresqlHost: "10.0.2.31"
   # -- External PostgreSQL service port.
   postgresqlPort: 5432
   # -- External PostgreSQL service database name.

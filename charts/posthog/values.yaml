@@ -108,7 +108,7 @@ events:
           name: posthog-redis-secret
           key: redis-password
     - name: REDIS_URL
-      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/48"
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
 
   # -- Container security context for the events stack HorizontalPodAutoscaler.
   securityContext:
@@ -277,7 +277,7 @@ web:
           name: posthog-redis-secret
           key: redis-password
     - name: REDIS_URL
-      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/48"
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
     - name: DATABASE_URL
       valueFrom:
         secretKeyRef:
@@ -396,11 +396,11 @@ worker:
           name: posthog-redis-secret
           key: redis-password
     - name: REDIS_URL
-      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/48"
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
     - name: CELERY_BROKER_URL
-      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/48"
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
     - name: CELERY_RESULT_BACKEND
-      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/48"
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
     - name: DATABASE_URL
       valueFrom:
         secretKeyRef:
@@ -508,7 +508,7 @@ plugins:
           name: posthog-redis-secret
           key: redis-password
     - name: REDIS_URL
-      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/48"
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
     - name: SITE_URL
       value: "https://posthog.drivex.in"      
 
@@ -1316,7 +1316,7 @@ pluginsScheduler:
           name: posthog-redis-secret
           key: redis-password
     - name: REDIS_URL
-      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/48"
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.211:6379/48"
 
   # -- Resource limits for the plugin-server stack deployment.
   resources: {}
@@ -1927,7 +1927,7 @@ redis:
         effect: "NoSchedule"  
 externalRedis:
   # -- External Redis host to use.
-  host: "192.168.4.81"
+  host: "192.168.4.211"
   # -- External Redis port to use.
   port: 6379
   # -- Password for the external Redis. Ignored if `externalRedis.existingSecret` is set.

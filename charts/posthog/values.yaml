@@ -1383,7 +1383,7 @@ temporal:
 
 temporalPyWorker:
   # -- Whether to install the PostHog Temporal Python worker stack or not.
-  enabled: true
+  enabled: false
 
   # -- Count of worker pods to run. This setting is ignored if `worker.hpa.enabled` is set to `true`.
   replicacount: 1

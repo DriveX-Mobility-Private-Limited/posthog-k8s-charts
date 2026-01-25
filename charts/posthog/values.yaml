@@ -1742,7 +1742,7 @@ externalPostgresql:
 
 _pgbouncer: &_pgbouncer 
 # -- Whether to deploy a PgBouncer service to satisfy the applications requirements.
-  enabled: ture
+  enabled: true
 
   exporter:
     # -- Whether to install a Prometheus export as a sidecar

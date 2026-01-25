@@ -1379,7 +1379,7 @@ toolbox:
   # -- Resource limits for the toolbox deployment.
   resources: {}
 temporal:
-  enabled: true
+  enabled: false
 
 temporalPyWorker:
   # -- Whether to install the PostHog Temporal Python worker stack or not.

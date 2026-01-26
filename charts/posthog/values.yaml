@@ -43,6 +43,8 @@ posthogSecretKey:
 
 # -- Environment variables to inject into every PostHog deployment.
 env:
+  - name: DEBUG
+    value: "true"
   - name: IS_BEHIND_PROXY
     value: "true"
    # CORS and Site Configuration

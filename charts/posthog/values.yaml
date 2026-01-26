@@ -55,7 +55,21 @@ env:
   - name: ALLOWED_ORIGIN_REGEX
     value: "https?://.*\\.drivex\\.dev"
   - name: DISABLE_SECURE_SSL_REDIRECT
-    value: "true"    
+    value: "true"
+  # CSRF Configuration - Add ALL your domains
+  - name: CSRF_TRUSTED_ORIGINS
+    value: "https://posthog-v1.drivex.dev,https://www.drivex.dev,https://drivex.dev,http://localhost:3000"
+  - name: CSRF_COOKIE_HTTPONLY
+    value: "false"
+  - name: CSRF_COOKIE_SAMESITE
+    value: "None"
+  - name: CSRF_COOKIE_SECURE
+    value: "true"
+  - name: SESSION_COOKIE_SAMESITE
+    value: "None"
+  - name: SESSION_COOKIE_SECURE
+    value: "true"
+  # Migration Job Configuration
   - name: CLICKHOUSE_MIGRATIONS_CLUSTER
     value: "posthog"
   - name: SKIP_ASYNC_MIGRATIONS_SETUP

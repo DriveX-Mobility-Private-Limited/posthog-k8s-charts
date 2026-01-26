@@ -45,12 +45,10 @@ posthogSecretKey:
 env:
   - name: SKIP_LINEAR_MIGRATIONS_CHECK
     value: "true"
-  # - name: DEBUG
-  #   value: "true"
   - name: IS_BEHIND_PROXY
     value: "true"
   - name: TRUSTED_PROXIES
-    value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,192.169.0.0/16"   
+    value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,192.169.0.0/16,65.1.123.78"   
    # CORS and Site Configuration
   - name: SITE_URL
     value: "https://posthog-v1.drivex.dev"
@@ -92,8 +90,6 @@ env:
     value: "1"
   - name: SKIP_SERVICE_VERSION_REQUIREMENTS
     value: "1"   
-  # - name: SITE_URL
-  #   value: "https://posthog.drivex.in"
   - name: LIVESTREAM_HOST
     value: "https://posthog-v1.drivex.dev"
     

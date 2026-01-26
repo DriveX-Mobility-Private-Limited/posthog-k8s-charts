@@ -43,7 +43,9 @@ posthogSecretKey:
 
 # -- Environment variables to inject into every PostHog deployment.
 env:
-  # CORS and Site Configuration
+  - name: IS_BEHIND_PROXY
+    value: "true"
+   # CORS and Site Configuration
   - name: SITE_URL
     value: "https://posthog-v1.drivex.dev"
   - name: ALLOWED_HOSTS
@@ -58,7 +60,7 @@ env:
     value: "true"
   # CSRF Configuration - Add ALL your domains
   - name: CSRF_TRUSTED_ORIGINS
-    value: "https://posthog-v1.drivex.dev,https://www.drivex.dev,https://drivex.dev,http://localhost:3000"
+    value: "https://posthog-v1.drivex.dev,https://www.drivex.dev,https://drivex.dev"
   - name: CSRF_COOKIE_HTTPONLY
     value: "false"
   - name: CSRF_COOKIE_SAMESITE
@@ -1672,11 +1674,10 @@ ingress:
     nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,X-Correlation-ID"    
     nginx.ingress.kubernetes.io/proxy-buffering: "off"
     nginx.ingress.kubernetes.io/configuration-snippet: |
-      proxy_set_header Origin $http_origin;
-      proxy_set_header Host $host;
       proxy_set_header X-Forwarded-Proto $scheme;
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection "upgrade";      
+      proxy_set_header X-Real-IP $remote_addr;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header Host $host;      
     # Add any other annotations your setup needs  
   # -- TLS secret to be used by the ingress.
   secretName:

@@ -43,6 +43,17 @@ posthogSecretKey:
 
 # -- Environment variables to inject into every PostHog deployment.
 env:
+  # CORS and Site Configuration
+  - name: SITE_URL
+    value: "https://posthog-v1.drivex.dev"
+  - name: ALLOWED_HOSTS
+    value: "posthog-v1.drivex.dev,www.drivex.dev,drivex.dev"
+  - name: CORS_ALLOWED_ORIGINS
+    value: "https://www.drivex.dev,https://drivex.dev,http://localhost:3000"
+  - name: CORS_ALLOW_CREDENTIALS
+    value: "true"
+  - name: ALLOWED_ORIGIN_REGEX
+    value: "https?://.*\\.drivex\\.dev"
   - name: CLICKHOUSE_MIGRATIONS_CLUSTER
     value: "posthog"
   - name: SKIP_ASYNC_MIGRATIONS_SETUP

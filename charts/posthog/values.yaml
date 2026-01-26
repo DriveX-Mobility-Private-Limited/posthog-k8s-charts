@@ -129,6 +129,16 @@ events:
 
   # -- Additional env variables to inject into the events stack, uses `web.env` if empty.
   env:
+    - name: CSRF_TRUSTED_ORIGINS
+      value: "https://posthog-v1.drivex.dev,https://www.drivex.dev,https://drivex.dev"
+    - name: CSRF_COOKIE_HTTPONLY
+      value: "false"
+    - name: CSRF_COOKIE_SAMESITE
+      value: "None"
+    - name: CSRF_COOKIE_SECURE
+      value: "true"
+    - name: ALLOWED_HOSTS
+      value: "*"  
     - name: REDIS_PASSWORD
       valueFrom:
         secretKeyRef:

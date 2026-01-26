@@ -47,7 +47,7 @@ env:
     value: "true"
   - name: IS_BEHIND_PROXY
     value: "true"
-   - name: TRUSTED_PROXIES
+  - name: TRUSTED_PROXIES
     value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,192.169.0.0/16"   
    # CORS and Site Configuration
   - name: SITE_URL

@@ -45,8 +45,8 @@ posthogSecretKey:
 env:
   - name: SKIP_LINEAR_MIGRATIONS_CHECK
     value: "true"
-  - name: DEBUG
-    value: "true"
+  # - name: DEBUG
+  #   value: "true"
   - name: IS_BEHIND_PROXY
     value: "true"
   - name: TRUSTED_PROXIES

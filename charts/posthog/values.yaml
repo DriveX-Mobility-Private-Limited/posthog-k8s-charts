@@ -99,7 +99,7 @@ env:
 
 migrate:
   # -- Whether to install the PostHog migrate job or not.
-  enabled: true
+  enabled: false
 
 events:
   # -- Whether to install the PostHog events stack or not.

@@ -43,6 +43,8 @@ posthogSecretKey:
 
 # -- Environment variables to inject into every PostHog deployment.
 env:
+  - name: SKIP_LINEAR_MIGRATIONS_CHECK
+    value: "true"
   - name: DEBUG
     value: "true"
   - name: IS_BEHIND_PROXY

@@ -48,6 +48,8 @@ env:
   # - name: TRUSTED_PROXIES
   #   value: "10.0.0.0/8,172.16.0.0/12,192.168.0.0/16,192.169.0.0/16"
   #  # CORS and Site Configuration
+  - name: DISABLE_CSRF
+    value: "true"  
   - name: SITE_URL
     value: "https://posthog-v1.drivex.dev"
   - name: ALLOWED_HOSTS
@@ -57,14 +59,14 @@ env:
   - name: CORS_ALLOW_CREDENTIALS
     value: "true"
   - name: ALLOWED_ORIGIN_REGEX
-    value: "https?://.*\\.drivex\\.dev"
+    value: "*"
   - name: DISABLE_SECURE_SSL_REDIRECT
     value: "true"
   # CSRF Configuration - Add ALL your domains
   - name: CSRF_TRUSTED_ORIGINS
     value: "https://posthog-v1.drivex.dev,https://www.drivex.dev,https://drivex.dev"
-  - name: CSRF_COOKIE_HTTPONLY
-    value: "false"
+  # - name: CSRF_COOKIE_HTTPONLY
+  #   value: "false"
   - name: CSRF_COOKIE_SAMESITE
     value: "None"
   - name: CSRF_COOKIE_SECURE

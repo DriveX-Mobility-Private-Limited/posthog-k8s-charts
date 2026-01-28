@@ -1680,9 +1680,14 @@ ingress:
     # nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS, PUT, DELETE, PATCH"
     # nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,X-Correlation-ID"    
     nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    nginx.ingress.kubernetes.io/proxy-set-headers: "posthog-proxy-headers"
     nginx.ingress.kubernetes.io/configuration-snippet: |
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header X-Forwarded-Host $host;
+      proxy_set_header Host $host;
       proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection "upgrade";       
+      proxy_set_header Connection "upgrade";    
     # Add any other annotations your setup needs  
   # -- TLS secret to be used by the ingress.
     # Add any other annotations your setup needs  

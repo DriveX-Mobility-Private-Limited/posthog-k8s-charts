@@ -323,7 +323,9 @@ web:
       valueFrom:
         secretKeyRef:
           name: posthog-postgresql-secret
-          key: postgresql-url      
+          key: postgresql-url
+    - name: CSRF_TRUSTED_ORIGINS
+      value: "https://posthog-v1.drivex.dev"          
     # - name: CLICKHOUSE_HOGQL_RDSPROXY_HOST
     #   value: "192.169.2.44"
     # - name: CLICKHOUSE_HOGQL_RDSPROXY_PORT

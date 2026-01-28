@@ -1686,8 +1686,6 @@ ingress:
       proxy_set_header X-Forwarded-Proto $scheme;
       proxy_set_header X-Forwarded-Host $host;
       proxy_set_header Host $host;
-      proxy_set_header Upgrade $http_upgrade;
-      proxy_set_header Connection "upgrade";
     # Add any other annotations your setup needs  
   # -- TLS secret to be used by the ingress.
     # Add any other annotations your setup needs  

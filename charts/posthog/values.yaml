@@ -1672,7 +1672,7 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
-    # nginx.ingress.kubernetes.io/websocket-services: "posthog-dev-web"
+    nginx.ingress.kubernetes.io/websocket-services: "posthog-dev-web"
     # CORS Configuration - ADD THESE
     # nginx.ingress.kubernetes.io/enable-cors: "true"
     # nginx.ingress.kubernetes.io/cors-allow-origin: "https://www.drivex.dev,https://drivex.dev,http://localhost:3000"
@@ -1681,10 +1681,15 @@ ingress:
     # nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,X-Correlation-ID"    
     nginx.ingress.kubernetes.io/proxy-buffering: "off"
     # nginx.ingress.kubernetes.io/proxy-set-headers: "posthog-proxy-headers"
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      proxy_set_header Host $host;
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-      proxy_set_header X-Forwarded-Proto $scheme;      
+    nginx.ingress.kubernetes.io/server-snippet: |
+      location ~ ^/(capture|decide|e|engage|track|s|batch)/?$ {
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header Host $host;
+        proxy_set_header Referer https://posthog-v1.drivex.dev/;
+        proxy_pass http://posthog-dev-events.posthog.svc.cluster.local:8000;
+      }   
     # Add any other annotations your setup needs  
   # -- TLS secret to be used by the ingress.
     # Add any other annotations your setup needs  

@@ -150,7 +150,10 @@ events:
           key: redis-password
     - name: REDIS_URL
       value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/1"
-
+    - name: CSRF_COOKIE_HTTPONLY
+      value: "false"
+    - name: CSRF_USE_SESSIONS
+      value: "false"
   # -- Container security context for the events stack HorizontalPodAutoscaler.
   securityContext:
     enabled: false

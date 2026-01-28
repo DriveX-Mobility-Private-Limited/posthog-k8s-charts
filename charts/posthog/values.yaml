@@ -324,19 +324,19 @@ web:
         secretKeyRef:
           name: posthog-postgresql-secret
           key: postgresql-url      
-    - name: CLICKHOUSE_HOGQL_RDSPROXY_HOST
-      value: "192.169.2.44"
-    - name: CLICKHOUSE_HOGQL_RDSPROXY_PORT
-      value: "5432"
-    - name: CLICKHOUSE_HOGQL_RDSPROXY_USER
-      value: "posthog"
-    - name: CLICKHOUSE_HOGQL_RDSPROXY_PASSWORD
-      valueFrom:
-        secretKeyRef:
-          name: posthog-postgresql-secret
-          key: postgresql-password
-    - name: CLICKHOUSE_HOGQL_RDSPROXY_DATABASE
-      value: "posthog"          
+    # - name: CLICKHOUSE_HOGQL_RDSPROXY_HOST
+    #   value: "192.169.2.44"
+    # - name: CLICKHOUSE_HOGQL_RDSPROXY_PORT
+    #   value: "5432"
+    # - name: CLICKHOUSE_HOGQL_RDSPROXY_USER
+    #   value: "posthog"
+    # - name: CLICKHOUSE_HOGQL_RDSPROXY_PASSWORD
+    #   valueFrom:
+    #     secretKeyRef:
+    #       name: posthog-postgresql-secret
+    #       key: postgresql-password
+    # - name: CLICKHOUSE_HOGQL_RDSPROXY_DATABASE
+    #   value: "posthog"          
   internalMetrics:
     # -- Deprecated: Whether to capture information on operation of posthog into posthog, exposed in /instance/status page
     capture: false

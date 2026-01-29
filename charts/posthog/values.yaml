@@ -218,7 +218,7 @@ recordings:
 # The majority of the capture config + chart resides in posthog/charts
 capture:
   ingress:
-    enabled: false
+    enabled: true
     service:
       name: posthog-dev-events
       port: 8000    

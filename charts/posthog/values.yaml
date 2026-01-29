@@ -1690,6 +1690,9 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-busy-buffers-size: "32k"
     nginx.ingress.kubernetes.io/client-header-buffer-size: "16k"
     nginx.ingress.kubernetes.io/large-client-header-buffers: "4 16k"
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/use-forwarded-headers: "true" 
     # CORS Configuration - ADD THESE
     # nginx.ingress.kubernetes.io/enable-cors: "true"
     # nginx.ingress.kubernetes.io/cors-allow-origin: "https://www.drivex.dev,https://drivex.dev,http://localhost:3000"

@@ -109,6 +109,13 @@ spec:
                 name: {{ .Values.capture.ingress.service.name }}
                 port:
                   number: {{ .Values.capture.ingress.service.port }}
+          - pathType: Exact
+            path: "/i"
+            backend:
+              service:
+                name: {{ .Values.capture.ingress.service.name }}
+                port:
+                  number: {{ .Values.capture.ingress.service.port }}                  
           {{- end }}
 
           {{- if .Values.decide.ingressEnabled}}

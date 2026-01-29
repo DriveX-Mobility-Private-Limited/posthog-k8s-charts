@@ -142,7 +142,9 @@ events:
     # - name: CSRF_COOKIE_SECURE
     #   value: "true"
     # - name: ALLOWED_HOSTS
-    #   value: "*"  
+    #   value: "*" 
+    - name: POSTHOG_SERVICE
+      value: "events"    
     - name: REDIS_PASSWORD
       valueFrom:
         secretKeyRef:

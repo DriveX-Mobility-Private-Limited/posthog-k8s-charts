@@ -14,7 +14,7 @@ image:
   # -- PostHog image SHA to use (example: `sha256:20af35fca6756d689d6705911a49dd6f2f6631e001ad43377b605cfc7c133eb4`).
   sha:
   # -- PostHog image tag to use (example: `release-1.43.0`).
-  tag: "bb33433dcf184a487119f0880d52096e4ae678af"
+  tag: ""
   # -- PostHog default image. Do not overwrite, use `image.sha` or `image.tag` instead.
   default: ":latest"
   # -- PostHog image pull policy.

@@ -60,10 +60,12 @@ env:
     value: "true"    
   - name: CORS_ALLOW_ALL_ORIGINS
     value: "true"
+  - name: CORS_ORIGIN_ALLOW_ALL
+    value: "true"    
   - name: CORS_ALLOW_CREDENTIALS
     value: "true"
   - name: CORS_ALLOW_HEADERS
-    value: "authorization,content-type,x-requested-with,accept,origin,referer,user-agent"
+    value: "*"
   - name: CORS_ALLOW_METHODS
     value: "GET,POST,PUT,PATCH,DELETE,OPTIONS"    
   # - name: ALLOWED_ORIGIN_REGEX

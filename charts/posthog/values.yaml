@@ -103,7 +103,9 @@ migrate:
 
 events:
   image:
+    repository: posthog/posthog
     tag: "latest"
+    pullPolicy: IfNotPresent
   # -- Whether to install the PostHog events stack or not.
   enabled: true
 

@@ -43,8 +43,8 @@ posthogSecretKey:
 
 # -- Environment variables to inject into every PostHog deployment.
 env:
-  # - name: IS_BEHIND_PROXY
-  #   value: "true"
+  - name: IS_BEHIND_PROXY
+    value: "1"
   - name: TRUSTED_PROXIES
     value: "*"
   #  # CORS and Site Configuration
@@ -58,10 +58,14 @@ env:
     value: "HTTP_X_FORWARDED_PROTO,https"
   - name: USE_X_FORWARDED_HOST
     value: "true"    
-  # - name: CORS_ALLOWED_ORIGINS
-  #   value: "https://www.drivex.dev,https://drivex.dev,http://localhost:3000"
-  # - name: CORS_ALLOW_CREDENTIALS
-  #   value: "true"
+  - name: CORS_ALLOW_ALL_ORIGINS
+    value: "true"
+  - name: CORS_ALLOW_CREDENTIALS
+    value: "true"
+  - name: CORS_ALLOW_HEADERS
+    value: "authorization,content-type,x-requested-with,accept,origin,referer,user-agent"
+  - name: CORS_ALLOW_METHODS
+    value: "GET,POST,PUT,PATCH,DELETE,OPTIONS"    
   # - name: ALLOWED_ORIGIN_REGEX
   #   value: "*"
   # - name: DISABLE_SECURE_SSL_REDIRECT

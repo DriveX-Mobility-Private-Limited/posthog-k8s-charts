@@ -33,6 +33,7 @@ metadata:
     {{- end }}
    {{- end }}
 spec:
+  ingressClassName: nginx
   {{- if or (eq (include "ingress.letsencrypt" .) "true") (or (.Values.ingress.secretName) (.Values.ingress.gcp.secretName)) }}
   tls:
   - hosts:

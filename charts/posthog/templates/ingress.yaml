@@ -88,6 +88,12 @@ spec:
           # just in case there are cases that we have subpaths for these
           # endpoints that still need to be passed to the `posthog-events` pods.
           - pathType: Prefix
+            path: "/array/"
+            backend: *INGESTION
+          - pathType: Exact
+            path: "/array"
+            backend: *INGESTION          
+          - pathType: Prefix
             path: "/capture/"
             backend: *INGESTION
           - pathType: Exact

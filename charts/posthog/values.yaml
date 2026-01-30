@@ -1690,23 +1690,23 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-busy-buffers-size: "32k"
     nginx.ingress.kubernetes.io/client-header-buffer-size: "16k"
     nginx.ingress.kubernetes.io/large-client-header-buffers: "4 16k"
-    nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
     nginx.ingress.kubernetes.io/use-forwarded-headers: "true" 
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
     # CORS Configuration - ADD THESE
     # nginx.ingress.kubernetes.io/enable-cors: "true"
     # nginx.ingress.kubernetes.io/cors-allow-origin: "https://www.drivex.dev,https://drivex.dev,http://localhost:3000"
     # nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     # nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS, PUT, DELETE, PATCH"
     # nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,X-Correlation-ID"    
-    nginx.ingress.kubernetes.io/proxy-buffering: "off"
     # nginx.ingress.kubernetes.io/proxy-set-headers: "posthog-proxy-headers"
-    nginx.ingress.kubernetes.io/configuration-snippet: |
-      proxy_set_header Host $host;
-      proxy_set_header X-Forwarded-Host $host;
-      proxy_set_header X-Forwarded-Proto $scheme;
-      proxy_set_header X-Forwarded-Port $server_port;
-      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;      
+    # nginx.ingress.kubernetes.io/configuration-snippet: |
+    #   proxy_set_header Host $host;
+    #   proxy_set_header X-Forwarded-Host $host;
+    #   proxy_set_header X-Forwarded-Proto $scheme;
+    #   proxy_set_header X-Forwarded-Port $server_port;
+    #   proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;      
     # nginx.ingress.kubernetes.io/server-snippet: |
     #   location = /healthz {
     #     access_log off;

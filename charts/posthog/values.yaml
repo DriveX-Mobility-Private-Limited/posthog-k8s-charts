@@ -43,6 +43,8 @@ posthogSecretKey:
 
 # -- Environment variables to inject into every PostHog deployment.
 env:
+  - name: DISABLE_CSRF
+    value: "true"
   - name: IS_BEHIND_PROXY
     value: "1"
   - name: TRUSTED_PROXIES
@@ -50,10 +52,6 @@ env:
   #  # CORS and Site Configuration
   - name: DISABLE_CSRF_CHECKS
     value: "1"
-  - name: SITE_URL
-    value: "https://posthog-v1.drivex.dev"
-  - name: ALLOWED_HOSTS
-    value: "*"
   - name: SECURE_PROXY_SSL_HEADER
     value: "HTTP_X_FORWARDED_PROTO,https"
   - name: USE_X_FORWARDED_HOST
@@ -75,8 +73,6 @@ env:
   # - name: DISABLE_SECURE_SSL_REDIRECT
   #   value: "true"
   # CSRF Configuration - Add ALL your domains
-  - name: CSRF_TRUSTED_ORIGINS
-    value: "https://posthog-v1.drivex.dev"
   # - name: CSRF_COOKIE_HTTPONLY
   #   value: "false"
   # - name: CSRF_COOKIE_SAMESITE
@@ -145,6 +141,8 @@ events:
 
   # -- Additional env variables to inject into the events stack, uses `web.env` if empty.
   env:
+    - name: ALLOWED_HOSTS
+      value: "*"  
     # - name: CSRF_TRUSTED_ORIGINS
     #   value: "https://posthog-v1.drivex.dev,https://www.drivex.dev,https://drivex.dev"
     # - name: CSRF_COOKIE_HTTPONLY
@@ -317,6 +315,12 @@ web:
 
   # -- Additional env variables to inject into the web stack deployment.
   env:
+    - name: SITE_URL
+      value: "https://posthog-v1.drivex.dev" 
+    - name: ALLOWED_HOSTS
+      value: "posthog-v1.drivex.dev"
+    - name: CSRF_TRUSTED_ORIGINS
+      value: "https://posthog-v1.drivex.dev"      
     # -- Set google oauth 2 key. Requires posthog ee license.
     - name: SOCIAL_AUTH_GOOGLE_OAUTH2_KEY
       value:

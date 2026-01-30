@@ -1674,7 +1674,7 @@ ingress:
   letsencrypt:
   nginx:
     # -- Whether nginx is enabled
-    enabled: true
+    enabled: false
     # -- Whether to redirect to TLS with nginx ingress.
     redirectToTLS: true
   # -- Extra annotations

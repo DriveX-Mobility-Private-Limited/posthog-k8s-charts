@@ -43,6 +43,8 @@ posthogSecretKey:
 
 # -- Environment variables to inject into every PostHog deployment.
 env:
+  - name: ALLOWED_HOSTS
+    value: "*"  
   - name: IS_BEHIND_PROXY
     value: "1"
   - name: TRUSTED_PROXIES
@@ -139,8 +141,6 @@ events:
 
   # -- Additional env variables to inject into the events stack, uses `web.env` if empty.
   env:
-    - name: ALLOWED_HOSTS
-      value: "*"  
     # - name: CSRF_TRUSTED_ORIGINS
     #   value: "https://posthog-v1.drivex.dev,https://www.drivex.dev,https://drivex.dev"
     # - name: CSRF_COOKIE_HTTPONLY

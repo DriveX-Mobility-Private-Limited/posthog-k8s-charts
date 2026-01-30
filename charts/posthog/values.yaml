@@ -48,8 +48,8 @@ env:
   - name: TRUSTED_PROXIES
     value: "*"
   #  # CORS and Site Configuration
-  # - name: DISABLE_CSRF
-  #   value: "true"  
+  - name: DISABLE_CSRF_CHECKS
+    value: "1"
   - name: SITE_URL
     value: "https://posthog-v1.drivex.dev"
   - name: ALLOWED_HOSTS

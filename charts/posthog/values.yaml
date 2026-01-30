@@ -1674,10 +1674,12 @@ ingress:
   letsencrypt:
   nginx:
     # -- Whether nginx is enabled
-    enabled: false
+    enabled: true
     # -- Whether to redirect to TLS with nginx ingress.
     redirectToTLS: true
   # -- Extra annotations
+ingress:
+  enabled: true
   annotations:
     kubernetes.io/ingress.class: "nginx"
     cert-manager.io/cluster-issuer: "letsencrypt-dev"

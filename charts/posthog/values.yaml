@@ -53,7 +53,7 @@ env:
   - name: SITE_URL
     value: "https://posthog-v1.drivex.dev"
   - name: ALLOWED_HOSTS
-    value: "posthog-v1.drivex.dev,localhost,127.0.0.1"
+    value: "posthog-v1.drivex.dev"
   - name: SECURE_PROXY_SSL_HEADER
     value: "HTTP_X_FORWARDED_PROTO,https"
   - name: USE_X_FORWARDED_HOST
@@ -1702,10 +1702,9 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-buffering: "off"
     # nginx.ingress.kubernetes.io/proxy-set-headers: "posthog-proxy-headers"
     nginx.ingress.kubernetes.io/configuration-snippet: |
-     proxy_set_header Host $host;
-     proxy_set_header X-Forwarded-Proto https;
-     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-     proxy_set_header X-Forwarded-Host $host;      
+      proxy_set_header Host $host;
+      proxy_set_header X-Forwarded-Host $host;
+      proxy_set_header X-Forwarded-Proto $scheme;      
     # Add any other annotations your setup needs  
   # -- TLS secret to be used by the ingress.
     # Add any other annotations your setup needs  

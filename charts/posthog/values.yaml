@@ -48,8 +48,8 @@ env:
   - name: TRUSTED_PROXIES
     value: "*"
   #  # CORS and Site Configuration
-  - name: DISABLE_CSRF_CHECKS
-    value: "1"
+  # - name: DISABLE_CSRF_CHECKS
+  #   value: "1"
   - name: SECURE_PROXY_SSL_HEADER
     value: "HTTP_X_FORWARDED_PROTO,https"
   - name: USE_X_FORWARDED_HOST

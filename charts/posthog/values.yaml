@@ -1659,6 +1659,7 @@ cert-manager:
 ingress:
   # -- Enable ingress controller resource
   enabled: true
+  ingressClassName: posthog-nginx
   # -- Ingress handler type. Defaults to `nginx` if nginx is enabled and to `clb` on gcp.
   type:
   # -- URL to address your PostHog installation. You will need to set up DNS after installation

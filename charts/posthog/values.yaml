@@ -1660,9 +1660,10 @@ ingress:
   # -- Enable ingress controller resource
   enabled: true
   # -- Ingress handler type. Defaults to `nginx` if nginx is enabled and to `clb` on gcp.
-  type:
+  type: nginx
   # -- URL to address your PostHog installation. You will need to set up DNS after installation
   hostname: "posthog-v1.drivex.dev"
+  ingressClassName: posthog-nginx
   gcp:
     # -- Specifies the name of the global IP address resource to be associated with the google clb
     ip_name: "posthog"
@@ -1701,10 +1702,10 @@ ingress:
     nginx.ingress.kubernetes.io/proxy-buffering: "off"
     # nginx.ingress.kubernetes.io/proxy-set-headers: "posthog-proxy-headers"
     nginx.ingress.kubernetes.io/configuration-snippet: |
-      proxy_set_header Host posthog-v1.drivex.dev;
-      proxy_set_header X-Forwarded-Host posthog-v1.drivex.dev;
-      proxy_set_header X-Forwarded-Proto https;
-      proxy_set_header X-Forwarded-Port 443;
+      proxy_set_header Host $host;
+      proxy_set_header X-Forwarded-Host $host;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header X-Forwarded-Port $server_port;
       proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;      
     nginx.ingress.kubernetes.io/server-snippet: |
       location = /healthz {

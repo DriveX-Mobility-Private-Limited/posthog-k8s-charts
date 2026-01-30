@@ -43,8 +43,6 @@ posthogSecretKey:
 
 # -- Environment variables to inject into every PostHog deployment.
 env:
-  - name: DISABLE_CSRF
-    value: "true"
   - name: IS_BEHIND_PROXY
     value: "1"
   - name: TRUSTED_PROXIES

@@ -1697,11 +1697,11 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/proxy-buffering: "off"
     # CORS Configuration - ADD THESE
-    # nginx.ingress.kubernetes.io/enable-cors: "true"
-    # nginx.ingress.kubernetes.io/cors-allow-origin: "https://www.drivex.dev,https://drivex.dev,http://localhost:3000"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://www.drivex.dev,https://drivex.dev"
     # nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
-    # nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS, PUT, DELETE, PATCH"
-    # nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,X-Correlation-ID"    
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS, PUT, DELETE, PATCH"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "Content-Type"   
     # nginx.ingress.kubernetes.io/proxy-set-headers: "posthog-proxy-headers"
     # nginx.ingress.kubernetes.io/configuration-snippet: |
     #   proxy_set_header Host $host;

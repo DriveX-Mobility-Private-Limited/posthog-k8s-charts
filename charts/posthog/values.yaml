@@ -171,9 +171,9 @@ events:
 
 recordings:
   # -- Whether to install the PostHog recordings stack or not.
-  enabled: false
+  enabled: true
   # -- Whether to route /s traffic to the recordings stack instead of the events stack
-  ingressEnabled: false
+  ingressEnabled: true
 
   # -- Count of recordings pods to run. This setting is ignored if `recordings.hpa.enabled` is set to `true`.
   replicacount: 1
@@ -221,8 +221,8 @@ capture:
 
 decide:
   # -- Whether to install the PostHog decide stack or not.
-  enabled: false
-  ingressEnabled: false
+  enabled: true
+  ingressEnabled: true
 
   # -- Count of decide pods to run. This setting is ignored if `decide.hpa.enabled` is set to `true`.
   replicacount: 1
@@ -1687,25 +1687,26 @@ ingress:
   # -- Extra annotations
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-dev"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"   
-    nginx.ingress.kubernetes.io/websocket-services: "posthog-dev-web"
-    nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
-    nginx.ingress.kubernetes.io/proxy-buffers: "8 16k"
-    nginx.ingress.kubernetes.io/proxy-busy-buffers-size: "32k"
-    nginx.ingress.kubernetes.io/client-header-buffer-size: "16k"
-    nginx.ingress.kubernetes.io/large-client-header-buffers: "4 16k"
-    nginx.ingress.kubernetes.io/use-forwarded-headers: "true" 
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/proxy-buffering: "off"
-    # CORS Configuration - ADD THESE
-    nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "https://www.drivex.dev"
-    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
-    nginx.ingress.kubernetes.io/cors-allow-methods: "POST, OPTIONS"
-    nginx.ingress.kubernetes.io/cors-allow-headers: "Content-Type"
+    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
+
+    # nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    # nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    # nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"   
+    # nginx.ingress.kubernetes.io/websocket-services: "posthog-dev-web"
+    # nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
+    # nginx.ingress.kubernetes.io/proxy-buffers: "8 16k"
+    # nginx.ingress.kubernetes.io/proxy-busy-buffers-size: "32k"
+    # nginx.ingress.kubernetes.io/client-header-buffer-size: "16k"
+    # nginx.ingress.kubernetes.io/large-client-header-buffers: "4 16k"
+    # nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    # nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    # nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    # nginx.ingress.kubernetes.io/enable-cors: "true"
+    # nginx.ingress.kubernetes.io/cors-allow-origin: "https://www.drivex.dev"
+    # nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    # nginx.ingress.kubernetes.io/cors-allow-methods: "POST, OPTIONS"
+    # nginx.ingress.kubernetes.io/cors-allow-headers: "Content-Type"
+    
     # nginx.ingress.kubernetes.io/configuration-snippet: |
     #   proxy_set_header Host $host;
     #   proxy_set_header X-Forwarded-Host $host;

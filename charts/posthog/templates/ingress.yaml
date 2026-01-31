@@ -6,9 +6,12 @@ metadata:
   labels:
     {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
   annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-dev"
-    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
-
+    {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
+    {{- if .Values.ingress.annotations }}
+    {{- range $key, $value := .Values.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+    {{- end }}
 spec:
   ingressClassName: posthog-nginx
 

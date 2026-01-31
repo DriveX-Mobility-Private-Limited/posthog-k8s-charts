@@ -12,8 +12,9 @@ metadata:
     {{ $key }}: {{ $value | quote }}
     {{- end }}
     {{- end }}
+
 spec:
-  ingressClassName: posthog-nginx
+  ingressClassName: {{ .Values.ingress.ingressClassName | default "posthog-nginx" }}
 
   tls:
     - hosts:
@@ -25,20 +26,9 @@ spec:
       http:
         paths:
 
-          # -----------------
-          # Web (UI / login)
-          # -----------------
-          - path: /
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ template "posthog.fullname" . }}-web
-                port:
-                  number: {{ .Values.service.externalPort }}
-
-          # -----------------
-          # Events ingestion
-          # -----------------
+          # =====================================
+          # 🔥 EVENTS INGESTION (FIRST ALWAYS)
+          # =====================================
           - path: /array
             pathType: Prefix
             backend: &INGESTION
@@ -59,6 +49,10 @@ spec:
             pathType: Prefix
             backend: *INGESTION
 
+          - path: /i
+            pathType: Prefix
+            backend: *INGESTION
+
           - path: /engage
             pathType: Prefix
             backend: *INGESTION
@@ -67,9 +61,10 @@ spec:
             pathType: Prefix
             backend: *INGESTION
 
-          # -----------------
+
+          # =====================================
           # Decide service
-          # -----------------
+          # =====================================
           {{- if .Values.decide.ingressEnabled }}
           - path: /decide
             pathType: Prefix
@@ -80,9 +75,10 @@ spec:
                   number: {{ .Values.service.externalPort }}
           {{- end }}
 
-          # -----------------
+
+          # =====================================
           # Recordings service
-          # -----------------
+          # =====================================
           {{- if .Values.recordings.ingressEnabled }}
           - path: /s
             pathType: Prefix
@@ -92,5 +88,17 @@ spec:
                 port:
                   number: {{ .Values.service.externalPort }}
           {{- end }}
+
+
+          # =====================================
+          # 🌐 WEB (LAST ALWAYS)
+          # =====================================
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ template "posthog.fullname" . }}-web
+                port:
+                  number: {{ .Values.service.externalPort }}
 
 {{- end }}

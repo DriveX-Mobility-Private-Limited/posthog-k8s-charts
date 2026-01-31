@@ -149,6 +149,8 @@ events:
     #   value: "true"
     # - name: ALLOWED_HOSTS
     #   value: "*"  
+    - name: DISABLE_CSRF_CHECKS
+      value: "1"    
     - name: POSTHOG_SERVICE
       value: "events"    
     - name: REDIS_PASSWORD
@@ -202,7 +204,9 @@ recordings:
     maxUnavailable: 25%
 
   # -- Additional env variables to inject into the recordings stack, uses `web.env` if empty.
-  env: []
+  env:
+    - name: DISABLE_CSRF_CHECKS
+      value: "1"
 
   # -- Container security context for the recordings stack HorizontalPodAutoscaler.
   securityContext:
@@ -254,7 +258,9 @@ decide:
     maxUnavailable: 25%
 
   # -- Additional env variables to inject into the decide stack, uses `web.env` if empty.
-  env: []
+  env:
+    - name: DISABLE_CSRF_CHECKS
+      value: "1" 
 
   # -- Container security context for the decide stack HorizontalPodAutoscaler.
   securityContext:
@@ -311,6 +317,8 @@ web:
 
   # -- Additional env variables to inject into the web stack deployment.
   env:
+    - name: DISABLE_CSRF_CHECKS
+      value: "1"  
     - name: ALLOWED_HOSTS
       value: "*"
     - name: USE_X_FORWARDED_HOST

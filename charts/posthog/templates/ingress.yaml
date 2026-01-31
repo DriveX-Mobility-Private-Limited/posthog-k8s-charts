@@ -6,15 +6,11 @@ metadata:
   labels:
     {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
   annotations:
-    {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
-    {{- if .Values.ingress.annotations }}
-    {{- range $key, $value := .Values.ingress.annotations }}
-    {{ $key }}: {{ $value | quote }}
-    {{- end }}
-    {{- end }}
+    cert-manager.io/cluster-issuer: "letsencrypt-dev"
+    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
 
 spec:
-  ingressClassName: {{ .Values.ingress.ingressClassName | default "posthog-nginx" }}
+  ingressClassName: posthog-nginx
 
   tls:
     - hosts:
@@ -26,16 +22,21 @@ spec:
       http:
         paths:
 
-          # =====================================
-          # 🔥 EVENTS INGESTION (FIRST ALWAYS)
-          # =====================================
-          - path: /array
+          # =========================
+          # EVENTS FIRST (CRITICAL)
+          # =========================
+
+          - path: /i
             pathType: Prefix
             backend: &INGESTION
               service:
                 name: {{ template "posthog.fullname" . }}-events
                 port:
                   number: {{ .Values.service.externalPort }}
+
+          - path: /e
+            pathType: Prefix
+            backend: *INGESTION
 
           - path: /capture
             pathType: Prefix
@@ -45,15 +46,7 @@ spec:
             pathType: Prefix
             backend: *INGESTION
 
-          - path: /e
-            pathType: Prefix
-            backend: *INGESTION
-
-          - path: /i
-            pathType: Prefix
-            backend: *INGESTION
-
-          - path: /engage
+          - path: /array
             pathType: Prefix
             backend: *INGESTION
 
@@ -61,10 +54,14 @@ spec:
             pathType: Prefix
             backend: *INGESTION
 
+          - path: /engage
+            pathType: Prefix
+            backend: *INGESTION
 
-          # =====================================
-          # Decide service
-          # =====================================
+
+          # =========================
+          # DECIDE
+          # =========================
           {{- if .Values.decide.ingressEnabled }}
           - path: /decide
             pathType: Prefix
@@ -76,9 +73,9 @@ spec:
           {{- end }}
 
 
-          # =====================================
-          # Recordings service
-          # =====================================
+          # =========================
+          # RECORDINGS
+          # =========================
           {{- if .Values.recordings.ingressEnabled }}
           - path: /s
             pathType: Prefix
@@ -90,9 +87,9 @@ spec:
           {{- end }}
 
 
-          # =====================================
-          # 🌐 WEB (LAST ALWAYS)
-          # =====================================
+          # =========================
+          # WEB LAST (IMPORTANT)
+          # =========================
           - path: /
             pathType: Prefix
             backend:

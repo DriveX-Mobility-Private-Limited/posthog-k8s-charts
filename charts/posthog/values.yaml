@@ -43,8 +43,6 @@ posthogSecretKey:
 
 # -- Environment variables to inject into every PostHog deployment.
 env:
-  - name: ALLOWED_HOSTS
-    value: "*"  
   - name: IS_BEHIND_PROXY
     value: "1"
   - name: TRUSTED_PROXIES
@@ -314,7 +312,7 @@ web:
   # -- Additional env variables to inject into the web stack deployment.
   env:
     - name: ALLOWED_HOSTS
-      value: "posthog-v1.drivex.dev"
+      value: "*"
     - name: USE_X_FORWARDED_HOST
       value: "true"
     - name: SECURE_PROXY_SSL_HEADER

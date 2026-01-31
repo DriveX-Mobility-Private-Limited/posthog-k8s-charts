@@ -313,6 +313,12 @@ web:
 
   # -- Additional env variables to inject into the web stack deployment.
   env:
+    - name: ALLOWED_HOSTS
+      value: "posthog-v1.drivex.dev"
+    - name: USE_X_FORWARDED_HOST
+      value: "true"
+    - name: SECURE_PROXY_SSL_HEADER
+      value: "HTTP_X_FORWARDED_PROTO,https"      
     - name: SITE_URL
       value: "https://posthog-v1.drivex.dev" 
     - name: CSRF_TRUSTED_ORIGINS
@@ -1685,7 +1691,7 @@ ingress:
     cert-manager.io/cluster-issuer: "letsencrypt-dev"
     nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
     nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "3600"   
     nginx.ingress.kubernetes.io/websocket-services: "posthog-dev-web"
     nginx.ingress.kubernetes.io/proxy-buffer-size: "16k"
     nginx.ingress.kubernetes.io/proxy-buffers: "8 16k"
@@ -1701,7 +1707,12 @@ ingress:
     nginx.ingress.kubernetes.io/cors-allow-origin: "https://www.drivex.dev"
     nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
     nginx.ingress.kubernetes.io/cors-allow-methods: "POST, OPTIONS"
-    nginx.ingress.kubernetes.io/cors-allow-headers: "Content-Type"   
+    nginx.ingress.kubernetes.io/cors-allow-headers: "Content-Type"
+    # nginx.ingress.kubernetes.io/configuration-snippet: |
+    #   proxy_set_header Host $host;
+    #   proxy_set_header X-Forwarded-Host $host;
+    #   proxy_set_header X-Forwarded-Proto https;
+
     # nginx.ingress.kubernetes.io/proxy-set-headers: "posthog-proxy-headers"
     # nginx.ingress.kubernetes.io/configuration-snippet: |
     #   proxy_set_header Host $host;

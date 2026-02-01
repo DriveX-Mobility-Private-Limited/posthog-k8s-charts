@@ -1,0 +1,195 @@
+{{- if .Values.customCapture.enabled }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-capture
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: posthog
+    role: capture
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.customCapture.replicaCount }}
+  selector:
+    matchLabels:
+      app: posthog
+      role: capture
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: posthog
+        role: capture
+        release: {{ .Release.Name }}
+    spec:
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: capture
+          image: {{ .Values.customCapture.image }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              name: http
+              protocol: TCP
+          env:
+            - name: CAPTURE_MODE
+              value: "events"
+            - name: ADDRESS
+              value: "0.0.0.0:3000"
+            - name: KAFKA_HOSTS
+              value: {{ .Values.customCapture.kafkaHosts | quote }}
+            - name: KAFKA_TOPIC
+              value: "events_plugin_ingestion"
+            - name: CLICKHOUSE_HOST
+              value: {{ .Values.customCapture.clickhouseHost | quote }}
+            - name: CLICKHOUSE_DATABASE
+              value: {{ .Values.customCapture.clickhouseDatabase | quote }}
+            - name: CLICKHOUSE_USER
+              value: {{ .Values.customCapture.clickhouseUser | quote }}
+            - name: CLICKHOUSE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.customCapture.clickhousePasswordSecret }}
+                  key: clickhouse-password
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.customCapture.postgresqlSecret }}
+                  key: postgresql-url
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.customCapture.redisSecret }}
+                  key: redis-password
+            - name: REDIS_URL
+              value: "redis://:$(REDIS_PASSWORD)@{{ .Values.customCapture.redisHost }}:{{ .Values.customCapture.redisPort }}/1"
+          {{- with .Values.customCapture.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-capture
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: posthog
+    role: capture
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    app: posthog
+    role: capture
+    release: {{ .Release.Name }}
+  ports:
+    - name: http
+      port: 3000
+      targetPort: http
+      protocol: TCP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-replay-capture
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: posthog
+    role: replay-capture
+    release: {{ .Release.Name }}
+spec:
+  replicas: {{ .Values.customCapture.replicaCount }}
+  selector:
+    matchLabels:
+      app: posthog
+      role: replay-capture
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: posthog
+        role: replay-capture
+        release: {{ .Release.Name }}
+    spec:
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+        - name: replay-capture
+          image: {{ .Values.customCapture.image }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 3000
+              name: http
+              protocol: TCP
+          env:
+            - name: CAPTURE_MODE
+              value: "recordings"
+            - name: ADDRESS
+              value: "0.0.0.0:3000"
+            - name: KAFKA_HOSTS
+              value: {{ .Values.customCapture.kafkaHosts | quote }}
+            - name: KAFKA_TOPIC
+              value: "session_recording_snapshot_item_events"
+            - name: CLICKHOUSE_HOST
+              value: {{ .Values.customCapture.clickhouseHost | quote }}
+            - name: CLICKHOUSE_DATABASE
+              value: {{ .Values.customCapture.clickhouseDatabase | quote }}
+            - name: CLICKHOUSE_USER
+              value: {{ .Values.customCapture.clickhouseUser | quote }}
+            - name: CLICKHOUSE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.customCapture.clickhousePasswordSecret }}
+                  key: clickhouse-password
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.customCapture.postgresqlSecret }}
+                  key: postgresql-url
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Values.customCapture.redisSecret }}
+                  key: redis-password
+            - name: REDIS_URL
+              value: "redis://:$(REDIS_PASSWORD)@{{ .Values.customCapture.redisHost }}:{{ .Values.customCapture.redisPort }}/1"
+          {{- with .Values.customCapture.resources }}
+          resources:
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Release.Name }}-replay-capture
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: posthog
+    role: replay-capture
+    release: {{ .Release.Name }}
+spec:
+  selector:
+    app: posthog
+    role: replay-capture
+    release: {{ .Release.Name }}
+  ports:
+    - name: http
+      port: 3000
+      targetPort: http
+      protocol: TCP
+{{- end }}

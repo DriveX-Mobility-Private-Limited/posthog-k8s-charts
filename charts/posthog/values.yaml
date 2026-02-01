@@ -4009,7 +4009,7 @@ asyncIngestion:
       value: "1"
     - name: TRUSTED_PROXIES
       value: "*"
-      - name: PLUGIN_SERVER_INGESTION
+    - name: PLUGIN_SERVER_INGESTION
       value: "true"
     - name: PLUGIN_SERVER_INGESTION_ONLY
       value: "true"

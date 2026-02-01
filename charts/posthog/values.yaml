@@ -3976,7 +3976,7 @@ customCapture:
 asyncIngestion:
   enabled: true
   replicaCount: 1
-  image: "posthog/posthog:1.43.0"
+  image: "drivexdocker/posthog-custom:1.43.1-kafka-fix"
   resources:
     requests:
       memory: "512Mi"

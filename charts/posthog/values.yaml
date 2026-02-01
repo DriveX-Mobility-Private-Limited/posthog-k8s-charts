@@ -109,7 +109,7 @@ migrate:
 
 events:
   # -- Whether to install the PostHog events stack or not.
-  enabled: true
+  enabled: false
 
   # -- Count of events pods to run. This setting is ignored if `events.hpa.enabled` is set to `true`.
   replicacount: 1
@@ -173,7 +173,7 @@ events:
 
 recordings:
   # -- Whether to install the PostHog recordings stack or not.
-  enabled: true
+  enabled: false
   # -- Whether to route /s traffic to the recordings stack instead of the events stack
   ingressEnabled: true
 
@@ -218,7 +218,7 @@ recordings:
 # The majority of the capture config + chart resides in posthog/charts
 capture:
   ingress:
-    enabled: true
+    enabled: false
     service:
       name: posthog-dev-events
       port: 8000    
@@ -1672,7 +1672,7 @@ cert-manager:
 ###
 ingress:
   # -- Enable ingress controller resource
-  enabled: true
+  enabled: false
   ingressClassName: posthog-nginx
   # -- Ingress handler type. Defaults to `nginx` if nginx is enabled and to `clb` on gcp.
   type:

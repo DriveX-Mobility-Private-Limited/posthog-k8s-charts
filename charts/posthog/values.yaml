@@ -693,7 +693,7 @@ pluginsAsync:
 pluginsIngestion:
   # -- Whether to install the PostHog plugin-server ingestion capability as an
   # individual workload.
-  enabled: false
+  enabled: true
 
   # -- Count of plugin-server pods to run. This setting is ignored if `pluginsIngestion.hpa.enabled` is set to `true`.
   replicacount: 1
@@ -728,9 +728,51 @@ pluginsIngestion:
       # behaviour is triggered for instance if there are too many events to be
       # processed in near real time from a single device.
       value: "false"
-
+    # This is automatically handled by the chart, but add any overrides here
+    - name: PLUGIN_SERVER_MODE
+      value: "ingester"  # ← Correct mode for 1.43.0
+    
+    # Kafka
+    - name: KAFKA_HOSTS
+      value: "posthog-dev-posthog-kafka:9092"
+    
+    # ClickHouse
+    - name: CLICKHOUSE_HOST
+      value: "chi-posthog-posthog-0-0"
+    - name: CLICKHOUSE_DATABASE
+      value: "posthog"
+    - name: CLICKHOUSE_USER
+      value: "admin"
+    - name: CLICKHOUSE_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: posthog-clickhouse-secret
+          key: clickhouse-password
+    
+    # PostgreSQL
+    - name: DATABASE_URL
+      valueFrom:
+        secretKeyRef:
+          name: posthog-postgresql-secret
+          key: postgresql-url
+    
+    # Redis
+    - name: REDIS_PASSWORD
+      valueFrom:
+        secretKeyRef:
+          name: posthog-redis-secret
+          key: redis-password
+    - name: REDIS_URL
+      value: "redis://:$(REDIS_PASSWORD)@192.168.4.81:6379/1"
+  
   # -- Resource limits for the plugin-server stack deployment.
-  resources: {}
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "200m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
 
   # -- Node labels for the plugin-server stack deployment.
   nodeSelector:
@@ -793,7 +835,7 @@ pluginsAnalyticsIngestion:
   # The reason these values were added is to be able to scale analytics and
   # session recordings events independently, and to be able to roll this out in
   # a backwards compatible way.
-  enabled: true
+  enabled: false
 
   # -- Count of plugin-server pods to run. This setting is ignored if
   # `pluginsAnalyticsIngestion.hpa.enabled` is set to `true`.

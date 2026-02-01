@@ -65,12 +65,12 @@ env:
     value: "GET,POST,PUT,PATCH,DELETE,OPTIONS"    
   - name: CLICKHOUSE_MIGRATIONS_CLUSTER
     value: "posthog"
-  - name: SKIP_ASYNC_MIGRATIONS_SETUP
-    value: "0"
-  - name: SKIP_ASYNC_MIGRATIONS
-    value: "1"
-  - name: RUN_ASYNC_MIGRATIONS
-    value: "0"
+  # - name: SKIP_ASYNC_MIGRATIONS_SETUP
+  #   value: "0"
+  # - name: SKIP_ASYNC_MIGRATIONS
+  #   value: "1"
+  # - name: RUN_ASYNC_MIGRATIONS
+  #   value: "0"
   - name: CLICKHOUSE_REPLICATION
     value: "false"
   - name: POSTHOG_SKIP_MIGRATION_CHECKS
@@ -445,8 +445,8 @@ worker:
     - /bin/bash
     - -c
     - |
-      export SKIP_ASYNC_MIGRATIONS_SETUP=1
-      export SKIP_ASYNC_MIGRATIONS=1
+      export SKIP_ASYNC_MIGRATIONS_SETUP=0
+      export SKIP_ASYNC_MIGRATIONS=0
       source ./bin/celery-queues.env
       ./bin/docker-worker-beat &
       celery -A posthog worker -Ofair -n node@%h --without-mingle --without-heartbeat

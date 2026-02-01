@@ -4013,6 +4013,10 @@ asyncIngestion:
       value: "ingestion"
     - name: PLUGIN_SERVER_INGESTION_ONLY
       value: "true"
+    - name: PLUGIN_SERVER_MODE
+      value: "ingestion"
+    - name: KAFKA_CONSUMPTION_TOPIC
+      value: "events_plugin_ingestion"
   resources:
     requests:
       memory: "512Mi"

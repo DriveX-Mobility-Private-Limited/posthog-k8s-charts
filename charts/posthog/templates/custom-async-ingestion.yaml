@@ -1,4 +1,4 @@
-{{- if .Values.customCapture.enabled }}
+{{- if .Values.asyncIngestion.enabled }}
 ---
 apiVersion: apps/v1
 kind: Deployment
@@ -23,17 +23,17 @@ spec:
         component: async-ingestion
         release: {{ .Release.Name }}
     spec:
-      {{- with .Values.nodeSelector }}
+      {{- with .Values.asyncIngestion.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.tolerations }}
+      {{- with .Values.asyncIngestion.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       containers:
         - name: async-ingestion
-          image: {{ .Values.asyncIngestion.image | default "posthog/posthog:1.43.0" }}
+          image: {{ .Values.asyncIngestion.image | default "posthog/posthog:latest" }}
           imagePullPolicy: IfNotPresent
           command:
             - ./bin/docker-server
@@ -44,19 +44,19 @@ spec:
             
             # Kafka
             - name: KAFKA_HOSTS
-              value: {{ .Values.customCapture.kafkaHosts | quote }}
+              value: {{ .Values.asyncIngestion.kafkaHosts | default "posthog-posthog-kafka:9092" | quote }}
             
             # ClickHouse
             - name: CLICKHOUSE_HOST
-              value: {{ .Values.customCapture.clickhouseHost | quote }}
+              value: {{ .Values.asyncIngestion.clickhouseHost | default "posthog-posthog-clickhouse:8123" | quote }}
             - name: CLICKHOUSE_DATABASE
-              value: {{ .Values.customCapture.clickhouseDatabase | quote }}
+              value: {{ .Values.asyncIngestion.clickhouseDatabase | default "posthog" | quote }}
             - name: CLICKHOUSE_USER
-              value: {{ .Values.customCapture.clickhouseUser | quote }}
+              value: {{ .Values.asyncIngestion.clickhouseUser | default "admin" | quote }}
             - name: CLICKHOUSE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.customCapture.clickhousePasswordSecret }}
+                  name: {{ .Values.asyncIngestion.clickhousePasswordSecret | default "posthog-clickhouse-secret" }}
                   key: clickhouse-password
             - name: CLICKHOUSE_SECURE
               value: "false"
@@ -67,33 +67,38 @@ spec:
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.customCapture.postgresqlSecret }}
+                  name: {{ .Values.asyncIngestion.postgresqlSecret | default "posthog-postgresql-secret" }}
                   key: postgresql-url
             
             # Redis
             - name: POSTHOG_REDIS_HOST
-              value: {{ .Values.customCapture.redisHost | quote }}
+              value: {{ .Values.asyncIngestion.redisHost | default "posthog-posthog-redis-master" | quote }}
             - name: POSTHOG_REDIS_PORT
-              value: {{ .Values.customCapture.redisPort | quote }}
+              value: {{ .Values.asyncIngestion.redisPort | default "6379" | quote }}
             - name: POSTHOG_REDIS_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.customCapture.redisSecret }}
+                  name: {{ .Values.asyncIngestion.redisSecret | default "posthog-redis-secret" }}
                   key: redis-password
             
             # Async migrations
             - name: SKIP_ASYNC_MIGRATIONS_SETUP
               value: "0"
+            
+            # Additional env vars from values
+            {{- if .Values.asyncIngestion.env }}
+            {{- range .Values.asyncIngestion.env }}
+            - name: {{ .name }}
+              {{- if .value }}
+              value: {{ .value | quote }}
+              {{- else if .valueFrom }}
+              valueFrom:
+                {{- toYaml .valueFrom | nindent 16 }}
+              {{- end }}
+            {{- end }}
+            {{- end }}
           {{- with .Values.asyncIngestion.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.asyncIngestion.nodeSelector }}
-      nodeSelector:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
-      {{- with .Values.asyncIngestion.tolerations }}
-      tolerations:
-        {{- toYaml . | nindent 8 }}
-      {{- end }}
 {{- end }}

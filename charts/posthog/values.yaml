@@ -3974,7 +3974,7 @@ customCapture:
       cpu: "500m"
 # Async Ingestion Worker (CRITICAL - This writes events to ClickHouse!)
 asyncIngestion:
-  enabled: true  # ← MUST be true
+  enabled: true
   replicaCount: 1
   image: "drivexdocker/posthog-custom:1.43.1-kafka-fix"
   
@@ -3989,21 +3989,21 @@ asyncIngestion:
   redisPort: "6379"
   redisSecret: "posthog-redis-secret"
   
-  # Additional environment variables
   env:
     - name: SECRET_KEY
       valueFrom:
         secretKeyRef:
-          name: posthog-async-ingestion-secret
-          key: async-ingestion-secret
+          name: posthog-posthog-secret
+          key: posthog-secret
     - name: SITE_URL
       value: "https://posthog-v1.drivex.dev"
     - name: IS_BEHIND_PROXY
       value: "1"
     - name: SKIP_SERVICE_VERSION_REQUIREMENTS
       value: "1"
+    - name: TRUSTED_PROXIES
+      value: "*"
   
-  # Resource limits
   resources:
     requests:
       memory: "512Mi"
@@ -4012,15 +4012,10 @@ asyncIngestion:
       memory: "1Gi"
       cpu: "1000m"
   
-  # Node scheduling
   nodeSelector:
     if-posthog-pod: "true"
   
   tolerations:
-    - key: "if-monitoring-pod"
-      operator: "Equal"
-      value: "true"
-      effect: "NoSchedule"
     - key: "if-posthog-pod"
       operator: "Equal"
       value: "true"

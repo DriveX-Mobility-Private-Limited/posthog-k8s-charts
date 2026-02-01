@@ -1,82 +1,78 @@
-{{- if .Values.customIngress.enabled }}
+{{- if .Values.customCapture.enabled }}
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ include "posthog.fullname" . }}-custom
+  name: {{ .Release.Name }}-custom
   namespace: {{ .Release.Namespace }}
   labels:
     app: posthog
     release: {{ .Release.Name }}
   annotations:
-    cert-manager.io/cluster-issuer: {{ .Values.ingress.annotations."cert-manager.io/cluster-issuer" | quote }}
-    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-    nginx.ingress.kubernetes.io/proxy-buffering: "off"
-    {{- if .Values.ingress.nginx.enabled }}
-    nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-origin: {{ .Values.ingress.annotations."nginx.ingress.kubernetes.io/cors-allow-origin" | quote }}
-    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
-    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS, PUT, DELETE, PATCH"
-    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,X-Correlation-ID"
+    {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
     {{- end }}
 spec:
-  ingressClassName: {{ .Values.ingress.className | default "nginx" }}
+  ingressClassName: {{ .Values.ingress.ingressClassName | default "nginx" }}
+  {{- if .Values.ingress.hostname }}
   tls:
     - hosts:
         - {{ .Values.ingress.hostname }}
-      secretName: {{ .Values.ingress.secretName | default (printf "%s-tls" (include "posthog.fullname" .)) }}
+      secretName: {{ .Values.ingress.secretName | default (printf "%s-tls" .Release.Name) }}
+  {{- end }}
   rules:
     - host: {{ .Values.ingress.hostname }}
       http:
         paths:
-          # Rust capture (events)
+          # Rust capture (events ingestion)
           - path: /capture/
             pathType: Prefix
             backend:
               service:
-                name: {{ include "posthog.fullname" . }}-capture
+                name: {{ .Release.Name }}-capture
                 port:
                   number: 3000
           - path: /e/
             pathType: Prefix
             backend:
               service:
-                name: {{ include "posthog.fullname" . }}-capture
+                name: {{ .Release.Name }}-capture
                 port:
                   number: 3000
           - path: /batch/
             pathType: Prefix
             backend:
               service:
-                name: {{ include "posthog.fullname" . }}-capture
+                name: {{ .Release.Name }}-capture
                 port:
                   number: 3000
-          # Rust capture (recordings)
+          
+          # Rust capture (session recordings)
           - path: /s/
             pathType: Prefix
             backend:
               service:
-                name: {{ include "posthog.fullname" . }}-replay-capture
+                name: {{ .Release.Name }}-replay-capture
                 port:
                   number: 3000
-          # Decide (if enabled)
+          
           {{- if .Values.decide.enabled }}
+          # Decide service (feature flags)
           - path: /decide/
             pathType: Prefix
             backend:
               service:
-                name: {{ include "posthog.fullname" . }}-decide
+                name: {{ .Release.Name }}-decide
                 port:
                   number: 8000
           {{- end }}
-          # Everything else → web
+          
+          # Everything else → Django web
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: {{ include "posthog.fullname" . }}-web
+                name: {{ .Release.Name }}-web
                 port:
                   number: 8000
 {{- end }}

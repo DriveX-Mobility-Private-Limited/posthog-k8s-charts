@@ -3990,6 +3990,10 @@ asyncIngestion:
   redisSecret: "posthog-redis-secret"
   
   env:
+    - name: LOG_LEVEL
+      value: "debug"
+    - name: SENTRY_DSN
+      value: "" 
     - name: SECRET_KEY
       valueFrom:
         secretKeyRef:

@@ -40,8 +40,8 @@ spec:
             - --no-restart-loop
           env:
             # Server mode - CRITICAL!
-            - name: PLUGIN_SERVER_MODE
-              value: "ingester"
+            # - name: PLUGIN_SERVER_MODE
+            #   value: "ingester"
             
             # Kafka
             - name: KAFKA_HOSTS

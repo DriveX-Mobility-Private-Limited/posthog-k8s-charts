@@ -35,9 +35,8 @@ spec:
         - name: async-ingestion
           image: {{ .Values.asyncIngestion.image | default "posthog/posthog:latest" }}
           imagePullPolicy: IfNotPresent
-          command:
-            - ./bin/plugin-server
-            - --no-restart-loop
+          command: ["/bin/sh", "-c"]
+          args: ["cd /code/plugin-server && node dist/index.js --no-restart-loop"]
           env:
             # Server mode - CRITICAL!
             # - name: PLUGIN_SERVER_MODE

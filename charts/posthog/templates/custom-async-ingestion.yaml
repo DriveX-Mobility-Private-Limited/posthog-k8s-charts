@@ -35,7 +35,7 @@ spec:
         - name: async-ingestion
           image: {{ .Values.asyncIngestion.image | default "posthog/posthog:latest" }}
           imagePullPolicy: IfNotPresent
-          command: ["./bin/plugin-server"]
+          command: ["/code/bin/plugin-server"]
           args: ["--no-restart-loop"]
           env:
             # Server mode - CRITICAL!

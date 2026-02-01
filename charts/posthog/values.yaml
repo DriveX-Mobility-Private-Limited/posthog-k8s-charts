@@ -3977,7 +3977,7 @@ asyncIngestion:
   enabled: true
   replicaCount: 1
   image: "posthog/posthog:latest"
-   command: 
+  command: 
     - "/bin/sh"
     - "-c"
   args:

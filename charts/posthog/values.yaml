@@ -1671,7 +1671,7 @@ cert-manager:
 ###
 ###
 ingress:
-  # -- Enable ingress controller resource
+  # -- Enabled custom ingress through customCapture resource
   enabled: false
   ingressClassName: posthog-nginx
   # -- Ingress handler type. Defaults to `nginx` if nginx is enabled and to `clb` on gcp.

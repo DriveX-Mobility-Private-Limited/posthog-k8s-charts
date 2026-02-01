@@ -486,9 +486,9 @@ plugins:
   # jobs. To scale these components separately, instead use the individual
   # component deployments, pluginsIngestion, pluginsAsync, pluginsJobs, and
   # pluginsScheduler.
-  enabled: false
+  enabled: true
   # -- Count of plugin-server pods to run. This setting is ignored if `plugins.hpa.enabled` is set to `true`.
-  replicacount: 1
+  replicacount: 0
 
   hpa:
     # -- Whether to create a HorizontalPodAutoscaler for the plugin stack.

@@ -1,87 +1,96 @@
-# ─── 3. INGRESS OVERRIDE ─────────────────────────────────────────────────────
-#     Replaces the Helm-generated ingress entirely.
-#     Routing matches the working Docker Compose (Caddy) proxy:
-#
-#       /capture/*  /e/*  /batch/*   → capture:3000    (Rust)
-#       /s/*                         → replay-capture:3000  (Rust)
-#       /flags/*  /decide/*          → web:8000        (Django — no separate svc)
-#       /*                           → web:8000        (Django — everything else)
-#
-#     NOTE: The Helm ingress is named "posthog-dev".  We name ours
-#           "posthog-dev-custom" so both can coexist briefly during cutover.
-#           Once confirmed working, delete the old one:
-#             kubectl delete ingress posthog-dev -n posthog
-# ────────────────────────────────────────────────────────────────────────────
-
----
+{{- if .Values.ingress.enabled -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: posthog-dev-custom
-  namespace: posthog
+  name: {{ template "posthog.fullname" . }}
   labels:
-    app: posthog
-    release: posthog-dev
+    {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
   annotations:
-    cert-manager.io/cluster-issuer: "letsencrypt-dev"
-    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
-    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
+    {{- if .Values.ingress.annotations }}
+    {{- range $key, $value := .Values.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
+    {{- end }}
 spec:
   ingressClassName: posthog-nginx
+
   tls:
     - hosts:
-        - posthog-v1.drivex.dev
-      secretName: posthog-dev-tls
+        - {{ .Values.ingress.hostname }}
+      secretName: {{ .Values.ingress.secretName | default "posthog-dev-tls" }}
+
   rules:
-    - host: posthog-v1.drivex.dev
+    - host: {{ .Values.ingress.hostname }}
       http:
         paths:
-          # ── Rust capture (events) ───────────────────────────────────────
-          - path: /capture/
-            pathType: Prefix
-            backend:
-              service:
-                name: posthog-dev-capture
-                port:
-                  number: 3000
-          - path: /e/
-            pathType: Prefix
-            backend:
-              service:
-                name: posthog-dev-capture
-                port:
-                  number: 3000
-          - path: /batch/
-            pathType: Prefix
-            backend:
-              service:
-                name: posthog-dev-capture
-                port:
-                  number: 3000
-          # ── Rust capture (session recordings) ──────────────────────────
-          - path: /s/
-            pathType: Prefix
-            backend:
-              service:
-                name: posthog-dev-replay-capture
-                port:
-                  number: 3000
-          # ── Decide (feature flags) → its own healthy Helm deployment ────
-          - path: /decide/
-            pathType: Prefix
-            backend:
-              service:
-                name: posthog-dev-decide
-                port:
-                  number: 8000
-          # ── Everything else → Django web ────────────────────────────────
-          #    This includes /flags/, /static/, the UI, admin, etc.
+
+          # -----------------
+          # Web (UI / login)
+          # -----------------
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: posthog-dev-web
+                name: {{ template "posthog.fullname" . }}-web
                 port:
-                  number: 8000
+                  number: {{ .Values.service.externalPort }}
+
+          # -----------------
+          # Events ingestion
+          # -----------------
+          - path: /array
+            pathType: Prefix
+            backend: &INGESTION
+              service:
+                name: {{ template "posthog.fullname" . }}-events
+                port:
+                  number: {{ .Values.service.externalPort }}
+
+          - path: /capture
+            pathType: Prefix
+            backend: *INGESTION
+
+          - path: /batch
+            pathType: Prefix
+            backend: *INGESTION
+
+          - path: /e
+            pathType: Prefix
+            backend: *INGESTION
+
+          - path: /engage
+            pathType: Prefix
+            backend: *INGESTION
+
+          - path: /track
+            pathType: Prefix
+            backend: *INGESTION
+
+          # -----------------
+          # Decide service
+          # -----------------
+          {{- if .Values.decide.ingressEnabled }}
+          - path: /decide
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ template "posthog.fullname" . }}-decide
+                port:
+                  number: {{ .Values.service.externalPort }}
+          {{- end }}
+
+          # -----------------
+          # Recordings service
+          # -----------------
+          {{- if .Values.recordings.ingressEnabled }}
+          - path: /s
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ template "posthog.fullname" . }}-recordings
+                port:
+                  number: {{ .Values.service.externalPort }}
+          {{- end }}
+
+{{- end }}

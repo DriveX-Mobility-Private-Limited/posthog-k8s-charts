@@ -3974,6 +3974,7 @@ customCapture:
       cpu: "500m"
 # Async Ingestion Worker (CRITICAL - This writes events to ClickHouse!)
 asyncIngestion:
+  enabled: true
   replicaCount: 1
   image: "posthog/posthog:1.43.0"
   resources:

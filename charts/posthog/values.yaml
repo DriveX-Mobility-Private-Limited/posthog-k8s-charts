@@ -4016,6 +4016,10 @@ asyncIngestion:
     if-posthog-pod: "true"
   
   tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
     - key: "if-posthog-pod"
       operator: "Equal"
       value: "true"

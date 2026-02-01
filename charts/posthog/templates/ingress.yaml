@@ -1,78 +1,96 @@
-{{- if .Values.customCapture.enabled }}
----
+{{- if .Values.ingress.enabled -}}
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Release.Name }}-custom
-  namespace: {{ .Release.Namespace }}
+  name: {{ template "posthog.fullname" . }}
   labels:
-    app: posthog
-    release: {{ .Release.Name }}
+    {{- include "_snippet-metadata-labels-common" . | nindent 4 }}
   annotations:
-    {{- with .Values.ingress.annotations }}
-    {{- toYaml . | nindent 4 }}
+    {{- include "_snippet-metadata-annotations-common" . | nindent 4 }}
+    {{- if .Values.ingress.annotations }}
+    {{- range $key, $value := .Values.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
     {{- end }}
 spec:
-  ingressClassName: {{ .Values.ingress.ingressClassName | default "nginx" }}
-  {{- if .Values.ingress.hostname }}
+  ingressClassName: posthog-nginx
+
   tls:
     - hosts:
         - {{ .Values.ingress.hostname }}
-      secretName: {{ .Values.ingress.secretName | default (printf "%s-tls" .Release.Name) }}
-  {{- end }}
+      secretName: {{ .Values.ingress.secretName | default "posthog-dev-tls" }}
+
   rules:
     - host: {{ .Values.ingress.hostname }}
       http:
         paths:
-          # Rust capture (events ingestion)
-          - path: /capture/
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ .Release.Name }}-capture
-                port:
-                  number: 3000
-          - path: /e/
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ .Release.Name }}-capture
-                port:
-                  number: 3000
-          - path: /batch/
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ .Release.Name }}-capture
-                port:
-                  number: 3000
-          
-          # Rust capture (session recordings)
-          - path: /s/
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ .Release.Name }}-replay-capture
-                port:
-                  number: 3000
-          
-          {{- if .Values.decide.enabled }}
-          # Decide service (feature flags)
-          - path: /decide/
-            pathType: Prefix
-            backend:
-              service:
-                name: {{ .Release.Name }}-decide
-                port:
-                  number: 8000
-          {{- end }}
-          
-          # Everything else → Django web
+
+          # -----------------
+          # Web (UI / login)
+          # -----------------
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: {{ .Release.Name }}-web
+                name: {{ template "posthog.fullname" . }}-web
                 port:
-                  number: 8000
+                  number: {{ .Values.service.externalPort }}
+
+          # -----------------
+          # Events ingestion
+          # -----------------
+          - path: /array
+            pathType: Prefix
+            backend: &INGESTION
+              service:
+                name: {{ template "posthog.fullname" . }}-events
+                port:
+                  number: {{ .Values.service.externalPort }}
+
+          - path: /capture
+            pathType: Prefix
+            backend: *INGESTION
+
+          - path: /batch
+            pathType: Prefix
+            backend: *INGESTION
+
+          - path: /e
+            pathType: Prefix
+            backend: *INGESTION
+
+          - path: /engage
+            pathType: Prefix
+            backend: *INGESTION
+
+          - path: /track
+            pathType: Prefix
+            backend: *INGESTION
+
+          # -----------------
+          # Decide service
+          # -----------------
+          {{- if .Values.decide.ingressEnabled }}
+          - path: /decide
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ template "posthog.fullname" . }}-decide
+                port:
+                  number: {{ .Values.service.externalPort }}
+          {{- end }}
+
+          # -----------------
+          # Recordings service
+          # -----------------
+          {{- if .Values.recordings.ingressEnabled }}
+          - path: /s
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ template "posthog.fullname" . }}-recordings
+                port:
+                  number: {{ .Values.service.externalPort }}
+          {{- end }}
+
 {{- end }}

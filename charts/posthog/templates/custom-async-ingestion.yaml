@@ -36,7 +36,8 @@ spec:
           image: {{ .Values.asyncIngestion.image | default "posthog/posthog:latest" }}
           imagePullPolicy: IfNotPresent
           command:
-            - ./bin/docker-server
+            - ./bin/plugin-server
+            - --no-restart-loop
           env:
             # Server mode - CRITICAL!
             - name: PLUGIN_SERVER_MODE

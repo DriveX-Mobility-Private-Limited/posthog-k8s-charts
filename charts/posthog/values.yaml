@@ -693,7 +693,7 @@ pluginsAsync:
 pluginsIngestion:
   # -- Whether to install the PostHog plugin-server ingestion capability as an
   # individual workload.
-  enabled: true
+  enabled: false
 
   # -- Count of plugin-server pods to run. This setting is ignored if `pluginsIngestion.hpa.enabled` is set to `true`.
   replicacount: 1

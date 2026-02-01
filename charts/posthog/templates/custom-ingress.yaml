@@ -1,0 +1,82 @@
+{{- if .Values.customIngress.enabled }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "posthog.fullname" . }}-custom
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: posthog
+    release: {{ .Release.Name }}
+  annotations:
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.annotations."cert-manager.io/cluster-issuer" | quote }}
+    nginx.ingress.kubernetes.io/use-forwarded-headers: "true"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "3600"
+    nginx.ingress.kubernetes.io/proxy-buffering: "off"
+    {{- if .Values.ingress.nginx.enabled }}
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: {{ .Values.ingress.annotations."nginx.ingress.kubernetes.io/cors-allow-origin" | quote }}
+    nginx.ingress.kubernetes.io/cors-allow-credentials: "true"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "GET, POST, OPTIONS, PUT, DELETE, PATCH"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization,X-Correlation-ID"
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.className | default "nginx" }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.hostname }}
+      secretName: {{ .Values.ingress.secretName | default (printf "%s-tls" (include "posthog.fullname" .)) }}
+  rules:
+    - host: {{ .Values.ingress.hostname }}
+      http:
+        paths:
+          # Rust capture (events)
+          - path: /capture/
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "posthog.fullname" . }}-capture
+                port:
+                  number: 3000
+          - path: /e/
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "posthog.fullname" . }}-capture
+                port:
+                  number: 3000
+          - path: /batch/
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "posthog.fullname" . }}-capture
+                port:
+                  number: 3000
+          # Rust capture (recordings)
+          - path: /s/
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "posthog.fullname" . }}-replay-capture
+                port:
+                  number: 3000
+          # Decide (if enabled)
+          {{- if .Values.decide.enabled }}
+          - path: /decide/
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "posthog.fullname" . }}-decide
+                port:
+                  number: 8000
+          {{- end }}
+          # Everything else → web
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "posthog.fullname" . }}-web
+                port:
+                  number: 8000
+{{- end }}

@@ -3977,7 +3977,11 @@ asyncIngestion:
   enabled: true
   replicaCount: 1
   image: "posthog/posthog:latest"
-  
+   command: 
+    - "/bin/sh"
+    - "-c"
+  args:
+    - "cd /code/plugin-server && node dist/index.js" 
   # Connection settings
   kafkaHosts: "posthog-dev-posthog-kafka:9092"
   clickhouseHost: "chi-posthog-posthog-0-0"

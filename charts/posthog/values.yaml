@@ -3977,6 +3977,18 @@ asyncIngestion:
   enabled: true
   replicaCount: 1
   image: "drivexdocker/posthog-custom:1.43.1-kafka-fix"
+  env:
+    - name: SECRET_KEY
+      valueFrom:
+        secretKeyRef:
+          name: posthog-posthog-secret
+          key: posthog-secret
+    - name: SITE_URL
+      value: "https://posthog-v1.drivex.dev"
+    - name: IS_BEHIND_PROXY
+      value: "1"
+    # - name: SKIP_SERVICE_VERSION_REQUIREMENTS
+    #   value: "1"  
   resources:
     requests:
       memory: "512Mi"

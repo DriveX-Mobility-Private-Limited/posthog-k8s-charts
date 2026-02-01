@@ -47,9 +47,6 @@ env:
     value: "1"
   - name: TRUSTED_PROXIES
     value: "*"
-  #  # CORS and Site Configuration
-  # - name: DISABLE_CSRF_CHECKS
-  #   value: "1"
   - name: SECURE_PROXY_SSL_HEADER
     value: "HTTP_X_FORWARDED_PROTO,https"
   - name: USE_X_FORWARDED_HOST
@@ -66,26 +63,10 @@ env:
     value: "*"
   - name: CORS_ALLOW_METHODS
     value: "GET,POST,PUT,PATCH,DELETE,OPTIONS"    
-  # - name: ALLOWED_ORIGIN_REGEX
-  #   value: "*"
-  # - name: DISABLE_SECURE_SSL_REDIRECT
-  #   value: "true"
-  # CSRF Configuration - Add ALL your domains
-  # - name: CSRF_COOKIE_HTTPONLY
-  #   value: "false"
-  # - name: CSRF_COOKIE_SAMESITE
-  #   value: "None"
-  # - name: CSRF_COOKIE_SECURE
-  #   value: "true"
-  # - name: SESSION_COOKIE_SAMESITE
-  #   value: "None"
-  # - name: SESSION_COOKIE_SECURE
-  #   value: "true"
-  # Migration Job Configuration
   - name: CLICKHOUSE_MIGRATIONS_CLUSTER
     value: "posthog"
   - name: SKIP_ASYNC_MIGRATIONS_SETUP
-    value: "1"
+    value: "0"
   - name: SKIP_ASYNC_MIGRATIONS
     value: "1"
   - name: RUN_ASYNC_MIGRATIONS
@@ -139,16 +120,6 @@ events:
 
   # -- Additional env variables to inject into the events stack, uses `web.env` if empty.
   env:
-    # - name: CSRF_TRUSTED_ORIGINS
-    #   value: "https://posthog-v1.drivex.dev,https://www.drivex.dev,https://drivex.dev"
-    # - name: CSRF_COOKIE_HTTPONLY
-    #   value: "false"
-    # - name: CSRF_COOKIE_SAMESITE
-    #   value: "None"
-    # - name: CSRF_COOKIE_SECURE
-    #   value: "true"
-    # - name: ALLOWED_HOSTS
-    #   value: "*"  
     - name: DISABLE_CSRF_CHECKS
       value: "1"    
     - name: POSTHOG_SERVICE
@@ -352,22 +323,7 @@ web:
       valueFrom:
         secretKeyRef:
           name: posthog-postgresql-secret
-          key: postgresql-url
-    # - name: CSRF_TRUSTED_ORIGINS
-    #   value: "https://posthog-v1.drivex.dev"          
-    # - name: CLICKHOUSE_HOGQL_RDSPROXY_HOST
-    #   value: "192.169.2.44"
-    # - name: CLICKHOUSE_HOGQL_RDSPROXY_PORT
-    #   value: "5432"
-    # - name: CLICKHOUSE_HOGQL_RDSPROXY_USER
-    #   value: "posthog"
-    # - name: CLICKHOUSE_HOGQL_RDSPROXY_PASSWORD
-    #   valueFrom:
-    #     secretKeyRef:
-    #       name: posthog-postgresql-secret
-    #       key: postgresql-password
-    # - name: CLICKHOUSE_HOGQL_RDSPROXY_DATABASE
-    #   value: "posthog"          
+          key: postgresql-url         
   internalMetrics:
     # -- Deprecated: Whether to capture information on operation of posthog into posthog, exposed in /instance/status page
     capture: false
@@ -467,13 +423,7 @@ worker:
     maxUnavailable: 25%
 
   # -- Additional env variables to inject into the worker stack deployment.
-  env:
-    # - name: SKIP_ASYNC_MIGRATIONS_SETUP
-    #   value: "1"
-    # - name: SKIP_ASYNC_MIGRATIONS
-    #   value: "1"
-    # - name: RUN_ASYNC_MIGRATIONS
-    #   value: "0"      
+  env:   
     - name: REDIS_PASSWORD
       valueFrom:
         secretKeyRef:

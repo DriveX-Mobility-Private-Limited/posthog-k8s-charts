@@ -3962,7 +3962,7 @@ customCapture:
   clickhouseUser: "admin"
   clickhousePasswordSecret: "posthog-clickhouse-secret"
   postgresqlSecret: "posthog-postgresql-secret"
-  redisHost: "192.168.4.81"
+  redisHost: "192.168.4.81"  
   redisPort: 6379
   redisSecret: "posthog-redis-secret"
   resources:
@@ -3972,3 +3972,25 @@ customCapture:
     limits:
       memory: "512Mi"
       cpu: "500m"
+# Async Ingestion Worker (CRITICAL - This writes events to ClickHouse!)
+asyncIngestion:
+  replicaCount: 1
+  image: "posthog/posthog:1.43.0"
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "200m"
+    limits:
+      memory: "1Gi"
+      cpu: "1000m"
+  nodeSelector:
+    if-posthog-pod: "true"
+  tolerations:
+    - key: "if-monitoring-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"
+    - key: "if-posthog-pod"
+      operator: "Equal"
+      value: "true"
+      effect: "NoSchedule"

@@ -3976,9 +3976,10 @@ customCapture:
 asyncIngestion:
   enabled: true
   replicaCount: 1
-  image: "posthog/posthog:bb33433dcf184a487119f0880d52096e4ae678af"
-  # Connection settings
+  image: "drivexdocker/posthog-custom:1.43.1-kafka-fix"
+  
   kafkaUrl: "kafka://posthog-dev-posthog-kafka:9092"
+  kafkaHosts: "posthog-dev-posthog-kafka:9092"
   clickhouseHost: "clickhouse-posthog-dev"
   clickhouseDatabase: "posthog"
   clickhouseUser: "admin"
@@ -3993,13 +3994,7 @@ asyncIngestion:
       valueFrom:
         secretKeyRef:
           name: posthog-async-ingestion-secret
-          key: async-ingestion-secret 
-    - name: LOG_LEVEL
-      value: "trace"
-    - name: LOG_LEVEL
-      value: "debug"
-    - name: SENTRY_DSN
-      value: "" 
+          key: async-ingestion-secret
     - name: SECRET_KEY
       valueFrom:
         secretKeyRef:
@@ -4013,14 +4008,7 @@ asyncIngestion:
       value: "1"
     - name: TRUSTED_PROXIES
       value: "*"
-    # - name: PLUGIN_SERVER_MODE
-    #   value: "ingestion"
-    # - name: PLUGIN_SERVER_INGESTION_ONLY
-    #   value: "true"
-    # - name: PLUGIN_SERVER_MODE
-    #   value: "ingestion"
-    # - name: KAFKA_CONSUMPTION_TOPIC
-    #   value: "events_plugin_ingestion"
+  
   resources:
     requests:
       memory: "512Mi"
@@ -4031,11 +4019,8 @@ asyncIngestion:
   
   nodeSelector:
     if-posthog-pod: "true"
+  
   tolerations:
-    - key: "if-monitoring-pod"
-      operator: "Equal"
-      value: "true"
-      effect: "NoSchedule"
     - key: "if-posthog-pod"
       operator: "Equal"
       value: "true"

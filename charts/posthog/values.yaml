@@ -3978,7 +3978,7 @@ asyncIngestion:
   replicaCount: 1
   image: "posthog/posthog:bb33433dcf184a487119f0880d52096e4ae678af"
   # Connection settings
-  kafkaHosts: "posthog-dev-posthog-kafka:9092"
+  kafkaUrl: "kafka://posthog-dev-posthog-kafka:9092"
   clickhouseHost: "clickhouse-posthog-dev"
   clickhouseDatabase: "posthog"
   clickhouseUser: "admin"

@@ -3977,11 +3977,6 @@ asyncIngestion:
   enabled: true
   replicaCount: 1
   image: "drivexdocker/posthog-custom:1.43.1-kafka-fix"
-  command: 
-    - "/bin/sh"
-    - "-c"
-  args:
-    - "cd /code/plugin-server && node dist/index.js" 
   # Connection settings
   kafkaHosts: "posthog-dev-posthog-kafka:9092"
   clickhouseHost: "chi-posthog-posthog-0-0"
@@ -4013,8 +4008,8 @@ asyncIngestion:
       value: "1"
     - name: TRUSTED_PROXIES
       value: "*"
-    - name: PLUGIN_SERVER_MODE
-      value: "ingestion"
+    # - name: PLUGIN_SERVER_MODE
+    #   value: "ingestion"
     # - name: PLUGIN_SERVER_INGESTION_ONLY
     #   value: "true"
     # - name: PLUGIN_SERVER_MODE
@@ -4031,7 +4026,6 @@ asyncIngestion:
   
   nodeSelector:
     if-posthog-pod: "true"
-  
   tolerations:
     - key: "if-monitoring-pod"
       operator: "Equal"

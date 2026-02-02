@@ -46,19 +46,18 @@ spec:
             
             # Kafka
             - name: KAFKA_HOSTS
-              value: {{ .Values.asyncIngestion.kafkaHosts | default "posthog-posthog-kafka:9092" | quote }}
-            
+              value: {{ .Values.asyncIngestion.kafkaHosts | quote }}            
             # ClickHouse
             - name: CLICKHOUSE_HOST
-              value: {{ .Values.asyncIngestion.clickhouseHost | default "posthog-posthog-clickhouse:8123" | quote }}
+              value: {{ .Values.asyncIngestion.clickhouseHost | quote }}
             - name: CLICKHOUSE_DATABASE
-              value: {{ .Values.asyncIngestion.clickhouseDatabase | default "posthog" | quote }}
+              value: {{ .Values.asyncIngestion.clickhouseDatabase | quote }}
             - name: CLICKHOUSE_USER
-              value: {{ .Values.asyncIngestion.clickhouseUser | default "admin" | quote }}
+              value: {{ .Values.asyncIngestion.clickhouseUser | quote }}
             - name: CLICKHOUSE_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: {{ .Values.asyncIngestion.clickhousePasswordSecret | default "posthog-clickhouse-secret" }}
+                  name: {{ .Values.asyncIngestion.clickhousePasswordSecret }}
                   key: clickhouse-password
             - name: CLICKHOUSE_SECURE
               value: "false"

@@ -46,7 +46,9 @@ spec:
             
             # Kafka
             - name: KAFKA_URL
-              value: {{ .Values.asyncIngestion.kafkaUrl | quote }}            
+              value: {{ .Values.asyncIngestion.kafkaUrl | quote }}  
+            - name: ENCRYPTION_KEYS
+              value: "posthog::12345678901234567890123456789012"  
             # ClickHouse
             - name: CLICKHOUSE_HOST
               value: {{ .Values.asyncIngestion.clickhouseHost | quote }}

@@ -35,20 +35,15 @@ spec:
         - name: async-ingestion
           image: {{ .Values.asyncIngestion.image | default "posthog/posthog:latest" }}
           imagePullPolicy: IfNotPresent
-          # command: ["./bin/plugin-server"] 
-          # args: ["./bin/plugin-server"]
           command: ["/bin/sh", "-c"]
           args: ["cd /code && ./bin/plugin-server --no-restart-loop"]
           env:
-            # Server mode - CRITICAL!
-            # - name: PLUGIN_SERVER_MODE
-            #   value: "ingester"
-            
             # Kafka
             - name: KAFKA_URL
-              value: {{ .Values.asyncIngestion.kafkaUrl | quote }}  
-            - name: ENCRYPTION_KEYS
-              value: '["posthog::12345678901234567890123456789012"]'
+              value: {{ .Values.asyncIngestion.kafkaUrl | default "kafka://posthog-dev-posthog-kafka:9092" | quote }}
+            - name: KAFKA_HOSTS
+              value: {{ .Values.asyncIngestion.kafkaHosts | default "posthog-dev-posthog-kafka:9092" | quote }}
+            
             # ClickHouse
             - name: CLICKHOUSE_HOST
               value: {{ .Values.asyncIngestion.clickhouseHost | quote }}
@@ -88,7 +83,7 @@ spec:
             - name: SKIP_ASYNC_MIGRATIONS_SETUP
               value: "0"
             
-            # Additional env vars from values
+            # Additional env vars from values - these will add/override above
             {{- if .Values.asyncIngestion.env }}
             {{- range .Values.asyncIngestion.env }}
             - name: {{ .name }}

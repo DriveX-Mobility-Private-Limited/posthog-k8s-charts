@@ -3999,7 +3999,7 @@ asyncIngestion:
       valueFrom:
         secretKeyRef:
           name: posthog-async-ingestion-secret
-          key: async-ingestion-secret
+          key: secret-key
     - name: SITE_URL
       value: "https://posthog-v1.drivex.dev"
     - name: IS_BEHIND_PROXY

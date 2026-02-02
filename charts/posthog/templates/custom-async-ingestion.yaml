@@ -45,8 +45,8 @@ spec:
             #   value: "ingester"
             
             # Kafka
-            - name: KAFKA_HOSTS
-              value: {{ .Values.asyncIngestion.kafkaHosts | quote }}            
+            - name: KAFKA_URL
+              value: {{ .Values.asyncIngestion.kafkaUrl | quote }}            
             # ClickHouse
             - name: CLICKHOUSE_HOST
               value: {{ .Values.asyncIngestion.clickhouseHost | quote }}

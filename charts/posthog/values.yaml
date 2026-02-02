@@ -3957,7 +3957,7 @@ customCapture:
   replicaCount: 1
   image: "ghcr.io/posthog/posthog/capture:master"
   kafkaHosts: "posthog-dev-posthog-kafka:9092"
-  clickhouseHost: "chi-posthog-posthog-0-0"
+  clickhouseHost: "clickhouse-posthog-dev"
   clickhouseDatabase: "posthog"
   clickhouseUser: "admin"
   clickhousePasswordSecret: "posthog-clickhouse-secret"

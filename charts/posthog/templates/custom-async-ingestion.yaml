@@ -9,40 +9,48 @@ metadata:
     app: posthog
     component: async-ingestion
     release: {{ .Release.Name }}
+
 spec:
   replicas: {{ .Values.asyncIngestion.replicaCount | default 1 }}
+
   selector:
     matchLabels:
       app: posthog
       component: async-ingestion
       release: {{ .Release.Name }}
+
   template:
     metadata:
       labels:
         app: posthog
         component: async-ingestion
         release: {{ .Release.Name }}
+
     spec:
       {{- with .Values.asyncIngestion.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+
       {{- with .Values.asyncIngestion.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+
       containers:
         - name: async-ingestion
           image: {{ .Values.asyncIngestion.image | default "posthog/posthog:latest" }}
           imagePullPolicy: IfNotPresent
           command: ["/bin/sh", "-c"]
           args: ["cd /code && ./bin/plugin-server --no-restart-loop"]
+
           env:
             # Kafka
             - name: KAFKA_URL
               value: {{ .Values.asyncIngestion.kafkaUrl | quote }}
             - name: KAFKA_HOSTS
               value: {{ .Values.asyncIngestion.kafkaHosts | quote }}
+
             # ClickHouse
             - name: CLICKHOUSE_HOST
               value: {{ .Values.asyncIngestion.clickhouseHost | quote }}
@@ -59,12 +67,14 @@ spec:
               value: "false"
             - name: CLICKHOUSE_VERIFY
               value: "false"
+
             # PostgreSQL
             - name: DATABASE_URL
               valueFrom:
                 secretKeyRef:
                   name: {{ .Values.asyncIngestion.postgresqlSecret }}
                   key: postgresql-url
+
             # Redis
             - name: POSTHOG_REDIS_HOST
               value: {{ .Values.asyncIngestion.redisHost | quote }}
@@ -75,10 +85,12 @@ spec:
                 secretKeyRef:
                   name: {{ .Values.asyncIngestion.redisSecret }}
                   key: redis-password
+
             # Async migrations
             - name: SKIP_ASYNC_MIGRATIONS_SETUP
               value: "0"
-            # Extra envs from values.yaml
+
+            # Extra envs (ONLY ONE LOOP – safe)
             {{- with .Values.asyncIngestion.env }}
             {{- range . }}
             - name: {{ .name }}
@@ -86,10 +98,11 @@ spec:
               value: {{ .value | quote }}
               {{- else if .valueFrom }}
               valueFrom:
-                {{- toYaml .valueFrom | nindent 16 }}
+{{ toYaml .valueFrom | indent 16 }}
               {{- end }}
             {{- end }}
             {{- end }}
+
           {{- with .Values.asyncIngestion.resources }}
           resources:
             {{- toYaml . | nindent 12 }}

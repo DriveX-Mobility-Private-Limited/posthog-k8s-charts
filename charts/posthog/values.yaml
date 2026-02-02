@@ -4009,7 +4009,7 @@ asyncIngestion:
     - name: TRUSTED_PROXIES
       value: "*"
     - name: PLUGIN_SERVER_MODE
-      value: "ingester"
+      value: "ingestion"
   resources:
     requests:
       memory: "512Mi"

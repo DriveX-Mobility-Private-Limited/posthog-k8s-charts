@@ -3989,6 +3989,11 @@ asyncIngestion:
   redisSecret: "posthog-redis-secret"
   
   env:
+    - name: ENCRYPTION_KEYS
+      valueFrom:
+        secretKeyRef:
+          name: posthog-async-ingestion-secret
+          key: async-ingestion-secret 
     - name: LOG_LEVEL
       value: "trace"
     - name: LOG_LEVEL

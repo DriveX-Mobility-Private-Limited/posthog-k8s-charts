@@ -3979,7 +3979,7 @@ asyncIngestion:
   image: "drivexdocker/posthog-custom:1.43.1-kafka-fix"
   # Connection settings
   kafkaHosts: "posthog-dev-posthog-kafka:9092"
-  clickhouseHost: "chi-posthog-posthog-0-0"
+  clickhouseHost: "clickhouse-posthog-dev"
   clickhouseDatabase: "posthog"
   clickhouseUser: "admin"
   clickhousePasswordSecret: "posthog-clickhouse-secret"

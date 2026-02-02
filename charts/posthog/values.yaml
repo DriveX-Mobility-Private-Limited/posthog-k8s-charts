@@ -3976,7 +3976,7 @@ customCapture:
 asyncIngestion:
   enabled: true
   replicaCount: 1
-  image: "drivexdocker/posthog-custom:1.43.1-kafka-fix"
+  image: "posthog/posthog:bb33433dcf184a487119f0880d52096e4ae678af"
   
   kafkaUrl: "kafka://posthog-dev-posthog-kafka:9092"
   kafkaHosts: "posthog-dev-posthog-kafka:9092"

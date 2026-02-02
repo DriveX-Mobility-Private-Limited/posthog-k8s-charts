@@ -82,7 +82,10 @@ spec:
             # Async migrations
             - name: SKIP_ASYNC_MIGRATIONS_SETUP
               value: "0"
-            
+            - name: ENCRYPTION_KEYS
+              value: {{ .Values.asyncIngestion.encryptionKeys | quote }}
+            - name: SECRET_KEY
+              value: {{ .Values.asyncIngestion.secretKey | quote }} 
             # Additional env vars from values - these will add/override above
             {{- if .Values.asyncIngestion.env }}
             {{- range .Values.asyncIngestion.env }}
